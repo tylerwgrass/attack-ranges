@@ -13,12 +13,12 @@ Will update dynamically if your attack style or weapon changes.
 #### Tiles
 Render the border of every tile you can see.
 
-![tiles.png](src/main/resources/tiles.png)
+![tiles.png](https://imgur.com/2YssnLf.png)
 
 #### Border
 Render an outline of your attackable area.
 
-![border.png](src/main/resources/border.png)
+![border.png](https://imgur.com/yX4p3xW.png)
 
 ### Display style
 #### Colors
