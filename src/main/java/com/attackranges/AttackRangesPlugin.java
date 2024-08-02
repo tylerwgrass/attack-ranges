@@ -32,38 +32,36 @@ import java.util.HashMap;
 )
 public class AttackRangesPlugin extends Plugin
 {
+	private final Map<Integer, Weapon> weaponsMap = new HashMap<>();
+	public Integer playerAttackRange = -1;
 	@Inject
 	private net.runelite.api.Client client;
-
 	@Inject
 	private AttackRangesConfig config;
-
 	@Inject
 	private AttackRangesOverlay overlay;
-
 	@Inject
 	private OverlayManager overlayManager;
-
-	private final Map<Integer,Weapon> weaponsMap = new HashMap<>();
 	private Item equippedWeapon;
-	public Integer playerAttackRange = -1;
 
 	@Override
-	protected void startUp() throws Exception
+	protected void startUp()
 	{
 		overlayManager.add(overlay);
 		weaponsMap.putAll(WeaponsGenerator.generate());
 	}
 
 	@Override
-	protected void shutDown() throws Exception
+	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
 	}
 
 	@Subscribe
-	public void onVarbitChanged(VarbitChanged event) {
-		if (event.getVarpId() == VarPlayer.ATTACK_STYLE || event.getVarbitId() == Varbits.EQUIPPED_WEAPON_TYPE) {
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (event.getVarpId() == VarPlayer.ATTACK_STYLE || event.getVarbitId() == Varbits.EQUIPPED_WEAPON_TYPE)
+		{
 			final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
 			final int equippedWeaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
 			updatePlayerAttackRange(attackStyleVarbit, equippedWeaponTypeVarbit);
@@ -71,7 +69,8 @@ public class AttackRangesPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onItemContainerChanged(ItemContainerChanged event) {
+	public void onItemContainerChanged(ItemContainerChanged event)
+	{
 		final ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
 		if (equipment == null)
 		{
@@ -96,26 +95,29 @@ public class AttackRangesPlugin extends Plugin
 		return configManager.getConfig(AttackRangesConfig.class);
 	}
 
-	private void updatePlayerAttackRange(Integer attackStyleVarbit, Integer weaponTypeVarbit) {
-		if (equippedWeapon == null) {
+	private void updatePlayerAttackRange(Integer attackStyleVarbit, Integer weaponTypeVarbit)
+	{
+		if (equippedWeapon == null)
+		{
 			return;
 		}
 
-		if (!weaponsMap.containsKey(equippedWeapon.getId())) {
+		if (!weaponsMap.containsKey(equippedWeapon.getId()))
+		{
 			log.warn("Unsupported equipment: {}", equippedWeapon);
 			playerAttackRange = -1;
 			return;
-		};
+		}
 
 		Weapon weapon = weaponsMap.get(equippedWeapon.getId());
 		playerAttackRange = weapon.getRange(getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit));
 	}
 
-	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit) {
+	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit)
+	{
 		int weaponStyleEnum = client.getEnum(EnumID.WEAPON_STYLES).getIntValue(weaponTypeVarbit);
 		int[] weaponStyleStructs = client.getEnum(weaponStyleEnum).getIntVals();
 		StructComposition attackStylesStruct = client.getStructComposition(weaponStyleStructs[attackStyleVarbit]);
-		log.info(attackStylesStruct.getStringValue(ParamID.ATTACK_STYLE_NAME));
 		return attackStylesStruct.getStringValue(ParamID.ATTACK_STYLE_NAME);
 	}
 }
