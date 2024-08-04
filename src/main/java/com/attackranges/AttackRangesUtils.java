@@ -17,6 +17,11 @@ public class AttackRangesUtils
 		final int areaHeight = wa.getHeight() + (dist * 2);
 		final WorldPoint[][] points = new WorldPoint[areaWidth][areaHeight];
 
+		if (dist <= 0)
+		{
+			return points;
+		}
+
 		int startX = wa.getX() - dist;
 		int startY = wa.getY() - dist;
 		int maxX = wa.getX() + wa.getWidth() + dist - 1;

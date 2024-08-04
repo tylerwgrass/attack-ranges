@@ -15,6 +15,8 @@ import net.runelite.api.ParamID;
 import net.runelite.api.StructComposition;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.config.ConfigManager;
@@ -33,7 +35,6 @@ import java.util.HashMap;
 public class AttackRangesPlugin extends Plugin
 {
 	private final Map<Integer, Weapon> weaponsMap = new HashMap<>();
-	public Integer playerAttackRange = -1;
 	@Inject
 	private net.runelite.api.Client client;
 	@Inject
@@ -43,6 +44,8 @@ public class AttackRangesPlugin extends Plugin
 	@Inject
 	private OverlayManager overlayManager;
 	private Item equippedWeapon;
+	public WorldPoint[][] playerVisiblePoints;
+	public Integer playerAttackRange = -1;
 
 	@Override
 	protected void startUp()
@@ -55,6 +58,12 @@ public class AttackRangesPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	protected void onGameTick(GameTick event)
+	{
+		playerVisiblePoints = AttackRangesUtils.getVisiblePoints(client.getLocalPlayer(), playerAttackRange);
 	}
 
 	@Subscribe

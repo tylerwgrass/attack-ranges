@@ -50,12 +50,12 @@ class AttackRangesOverlay extends Overlay
 		{
 			return;
 		}
-		drawAttackableSquares(graphics, client.getLocalPlayer(), plugin.playerAttackRange, config.rangeBorderColor());
+
+		drawAttackableSquares(graphics, client.getLocalPlayer(), plugin.playerVisiblePoints, config.rangeBorderColor());
 	}
 
-	private void drawAttackableSquares(Graphics2D graphics, Actor actor, Integer range, Color color)
+	private void drawAttackableSquares(Graphics2D graphics, Actor actor, WorldPoint[][] points, Color color)
 	{
-		WorldPoint[][] points = getVisiblePoints(actor, range);
 		WorldView wv = actor.getWorldView();
 		for (int i = 0; i < points.length; i++)
 		{
@@ -83,12 +83,16 @@ class AttackRangesOverlay extends Overlay
 		LocalPoint lp = LocalPoint.fromWorld(wv, wp);
 		if (lp != null)
 		{
-			OverlayUtil.renderPolygon(
-				graphics,
-				Perspective.getCanvasTilePoly(client, lp),
-				borderColor,
-				config.rangeFillColor(),
-				new BasicStroke(config.borderSize()));
+			Polygon p = Perspective.getCanvasTilePoly(client, lp);
+			if (p != null)
+			{
+				OverlayUtil.renderPolygon(
+					graphics,
+					p,
+					borderColor,
+					config.rangeFillColor(),
+					new BasicStroke(config.borderSize()));
+			}
 		}
 	}
 
@@ -107,9 +111,11 @@ class AttackRangesOverlay extends Overlay
 		{
 			graphics.setColor(config.rangeFillColor());
 			Polygon p = Perspective.getCanvasTilePoly(client, lp);
-			graphics.fill(p);
+			if (p != null)
+			{
+				graphics.fill(p);
+			}
 		}
-
 	}
 
 	private void drawTopBorder(Graphics2D graphics, WorldPoint wp, WorldView wv, WorldPoint[][] points, int i, int j)
