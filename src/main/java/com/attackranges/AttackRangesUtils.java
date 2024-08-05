@@ -11,16 +11,16 @@ public class AttackRangesUtils
 {
 	public static WorldPoint[][] getVisiblePoints(Actor actor, int dist)
 	{
+		if (dist < 1)
+		{
+			return new WorldPoint[0][0];
+		}
+
 		final WorldArea wa = actor.getWorldArea();
 		final WorldView wv = actor.getWorldView();
 		final int areaWidth = wa.getWidth() + (dist * 2);
 		final int areaHeight = wa.getHeight() + (dist * 2);
 		final WorldPoint[][] points = new WorldPoint[areaWidth][areaHeight];
-
-		if (dist <= 0)
-		{
-			return points;
-		}
 
 		int startX = wa.getX() - dist;
 		int startY = wa.getY() - dist;

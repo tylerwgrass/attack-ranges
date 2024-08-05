@@ -19,8 +19,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 
-import static com.attackranges.AttackRangesUtils.getVisiblePoints;
-
 @Slf4j
 class AttackRangesOverlay extends Overlay
 {
