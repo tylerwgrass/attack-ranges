@@ -12,11 +12,30 @@ import java.awt.Color;
 public interface AttackRangesConfig extends Config
 {
 	@ConfigSection(
+		name = "Options",
+		description = "Attack range options",
+		position = 1
+	)
+	String options = "options";
+
+	@ConfigSection(
 		name = "Styles",
 		description = "Visual styles",
 		position = 2
 	)
 	String styles = "styles";
+
+
+	@ConfigItem(
+		keyName = "playerEnableState",
+		name = "Display Overlay",
+		description = "When the overlay will be shown",
+		section = options
+	)
+	default EnableState playerEnableState()
+	{
+		return EnableState.ON;
+	}
 
 	@ConfigItem(
 		keyName = "displayMode",
@@ -69,5 +88,12 @@ public interface AttackRangesConfig extends Config
 	{
 		TILES,
 		BORDER
+	}
+
+	enum EnableState
+	{
+		ON,
+		OFF,
+		INSTANCES_ONLY
 	}
 }

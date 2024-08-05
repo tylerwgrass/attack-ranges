@@ -44,7 +44,7 @@ class AttackRangesOverlay extends Overlay
 
 	private void renderPlayer(Graphics2D graphics)
 	{
-		if (plugin.playerAttackRange < 1)
+		if (!AttackRangesUtils.shouldRenderForPlayer(plugin, config, client))
 		{
 			return;
 		}

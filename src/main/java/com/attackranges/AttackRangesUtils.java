@@ -1,8 +1,12 @@
 package com.attackranges;
 
+import com.attackranges.AttackRangesConfig.EnableState;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
+import net.runelite.api.Client;
 import net.runelite.api.WorldView;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 
@@ -39,5 +43,39 @@ public class AttackRangesUtils
 			}
 		}
 		return points;
+	}
+
+	private static final int FIGHT_CAVES_REGION_ID = 9551;
+	private static final int INFERNO_REGION_ID = 9043;
+	private static final int GAUNTLET_REGION_ID = 7512;
+	private static final int CORRUPTED_GAUNTLET_REGION_ID = 7768;
+	private static final int FORTIS_COLOSSEUM_REGION_ID = 7216;
+
+	public static final Set<Integer> SUPPORTED_REGIONS = Set.of(
+		FIGHT_CAVES_REGION_ID,
+		INFERNO_REGION_ID,
+		GAUNTLET_REGION_ID,
+		CORRUPTED_GAUNTLET_REGION_ID,
+		FORTIS_COLOSSEUM_REGION_ID
+	);
+
+	public static boolean shouldRenderForPlayer(AttackRangesPlugin plugin, AttackRangesConfig config, Client client)
+	{
+		if (plugin.playerAttackRange < 1)
+		{
+			return false;
+		}
+
+		WorldPoint wp = client.getLocalPlayer().getWorldLocation();
+		LocalPoint lp = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), wp);
+
+		if (lp == null)
+		{
+			return false;
+		}
+
+		int regionId = WorldPoint.fromLocalInstance(client, lp).getRegionID();
+		return config.playerEnableState() == EnableState.ON
+			|| (config.playerEnableState() == EnableState.INSTANCES_ONLY && SUPPORTED_REGIONS.contains(regionId));
 	}
 }
