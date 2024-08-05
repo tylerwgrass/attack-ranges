@@ -83,16 +83,11 @@ public class AttackRangesPlugin extends Plugin
 		final ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
 		if (equipment == null)
 		{
+			equippedWeapon = null;
 			return;
 		}
 
-		Item weapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
-		if (weapon == null)
-		{
-			return;
-		}
-
-		equippedWeapon = weapon;
+		equippedWeapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());;
 		final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
 		final int equippedWeaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
 		updatePlayerAttackRange(attackStyleVarbit, equippedWeaponTypeVarbit);
@@ -108,6 +103,7 @@ public class AttackRangesPlugin extends Plugin
 	{
 		if (equippedWeapon == null)
 		{
+			playerAttackRange = -1;
 			return;
 		}
 
