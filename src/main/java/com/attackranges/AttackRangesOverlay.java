@@ -1,5 +1,6 @@
 package com.attackranges;
 
+import static com.attackranges.AttackRangesUtils.isOuterTile;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
@@ -64,13 +65,16 @@ class AttackRangesOverlay extends Overlay
 				{
 					continue;
 				}
-				if (config.displayMode() == AttackRangesConfig.DisplayMode.TILES)
+				switch (config.displayMode())
 				{
-					drawTile(graphics, wp, wv, config.rangeBorderColor());
-				}
-				else
-				{
-					drawBorders(graphics, wp, wv, points, i, j, color);
+					case TILES:
+						drawTile(graphics, wp, wv, color);
+						continue;
+					case EDGE_TILES:
+						drawTile(graphics, wp, wv, points, i, j, color);
+						continue;
+					case BORDER:
+						drawBorders(graphics, wp, wv, points, i, j, color);
 				}
 			}
 		}
@@ -93,6 +97,17 @@ class AttackRangesOverlay extends Overlay
 			}
 		}
 	}
+	private void drawTile(
+		Graphics2D graphics, WorldPoint wp, WorldView wv, WorldPoint[][] points, int i, int j, Color borderColor)
+	{
+		if (!isOuterTile(points, i, j))
+		{
+			return;
+		}
+
+		drawTile(graphics, wp, wv, borderColor);
+	}
+
 
 	private void drawBorders(
 		Graphics2D graphics, WorldPoint wp, WorldView wv, WorldPoint[][] points, int i, int j, Color borderColor)

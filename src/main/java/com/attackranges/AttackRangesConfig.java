@@ -87,7 +87,8 @@ public interface AttackRangesConfig extends Config
 	enum DisplayMode
 	{
 		TILES,
-		BORDER
+		BORDER,
+		EDGE_TILES,
 	}
 
 	enum EnableState

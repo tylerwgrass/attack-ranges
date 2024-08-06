@@ -62,4 +62,14 @@ public class AttackRangesUtils
 		return config.playerEnableState() == EnableState.ON
 			|| (config.playerEnableState() == EnableState.INSTANCES_ONLY && SUPPORTED_REGIONS.contains(regionId));
 	}
+
+	public static boolean isOuterTile(WorldPoint[][] points, int i, int j)
+	{
+		boolean isTopEdge = j == 0 || points[i][j - 1] == null;
+		boolean isBottomEdge = j == points.length - 1 || points[i][j + 1] == null;
+		boolean isLeftEdge = i == 0 || points[i - 1][j] == null;
+		boolean isRightEdge = i == points[0].length - 1 || points[i + 1][j] == null;
+
+		return isTopEdge || isBottomEdge || isLeftEdge || isRightEdge;
+	}
 }
