@@ -38,6 +38,14 @@ public interface AttackRangesConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "allowListedWeapons",
+		name = "Rendered weapons",
+		description = "List of items you want displayed. Supports wildcards. Example: Trident*, rune crossbow",
+		section = options
+	)
+	default String getAllowListedWeapons() { return ""; }
+
+	@ConfigItem(
 		keyName = "displayMode",
 		name = "Display Mode",
 		description = "How the attack range is displayed",

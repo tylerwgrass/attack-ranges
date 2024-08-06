@@ -3,16 +3,33 @@ package com.attackranges;
 import com.attackranges.AttackRangesConfig.EnableState;
 import static com.attackranges.Regions.SUPPORTED_REGIONS;
 import static com.attackranges.Regions.getPlayerRegionId;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.util.WildcardMatcher;
 
-@Slf4j
 public class AttackRangesUtils
 {
+	public static boolean isAllowlistedWeapon(String weaponName, List<String> allowListedWeapons)
+	{
+		if (allowListedWeapons.isEmpty())
+		{
+			return true;
+		}
+
+		for (String pattern : allowListedWeapons)
+		{
+			if (WildcardMatcher.matches(pattern, weaponName))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static WorldPoint[][] getVisiblePoints(Actor actor, int dist)
 	{
 		if (dist < 1)

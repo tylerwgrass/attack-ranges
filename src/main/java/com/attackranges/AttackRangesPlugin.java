@@ -1,9 +1,13 @@
 package com.attackranges;
 
+import static com.attackranges.AttackRangesUtils.isAllowlistedWeapon;
 import static com.attackranges.Regions.isInRegion;
 import com.attackranges.weapons.Weapon;
 import com.attackranges.weapons.WeaponsGenerator;
+import com.google.common.base.Splitter;
 import com.google.inject.Provides;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +15,7 @@ import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
+import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.NpcID;
 import net.runelite.api.ParamID;
@@ -23,8 +28,10 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -47,7 +54,11 @@ public class AttackRangesPlugin extends Plugin
 	private AttackRangesOverlay overlay;
 	@Inject
 	private OverlayManager overlayManager;
+	@Inject
+	private ClientThread clientThread;
+	private final Splitter allowListSplitter = Splitter.on(',').omitEmptyStrings().trimResults();
 	private Item equippedWeapon;
+	private List<String> allowListedWeapons = new ArrayList<>();
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
 	public Integer externalRangeModifier = 0;
@@ -57,12 +68,24 @@ public class AttackRangesPlugin extends Plugin
 	{
 		overlayManager.add(overlay);
 		weaponsMap.putAll(WeaponsGenerator.generate());
+		allowListedWeapons = allowListSplitter.splitToList(config.getAllowListedWeapons());
 	}
 
 	@Override
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		switch(event.getKey())
+		{
+			case "allowListedWeapons":
+				allowListedWeapons = allowListSplitter.splitToList(event.getNewValue());
+				clientThread.invoke(this::updatePlayerAttackRange);
+		}
 	}
 
 	@Subscribe
@@ -140,6 +163,13 @@ public class AttackRangesPlugin extends Plugin
 		final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
 		final int weaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
 		if (equippedWeapon == null)
+		{
+			playerAttackRange = -1;
+			return;
+		}
+
+		ItemComposition weaponComposition = client.getItemDefinition(equippedWeapon.getId());
+		if (!isAllowlistedWeapon(weaponComposition.getName(), allowListedWeapons))
 		{
 			playerAttackRange = -1;
 			return;
