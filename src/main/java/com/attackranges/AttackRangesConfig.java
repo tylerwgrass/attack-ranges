@@ -25,7 +25,6 @@ public interface AttackRangesConfig extends Config
 	)
 	String styles = "styles";
 
-
 	@ConfigItem(
 		keyName = "playerEnableState",
 		name = "Display Overlay",
@@ -44,6 +43,14 @@ public interface AttackRangesConfig extends Config
 		section = options
 	)
 	default String getAllowListedWeapons() { return ""; }
+
+	@ConfigItem(
+		keyName = "showManualCasting",
+		name = "Display manual casting",
+		description = "Display cast range for weapons when not auto casting",
+		section = options
+	)
+	default boolean getManualCastingMode() { return false; }
 
 	@ConfigItem(
 		keyName = "displayMode",

@@ -2,6 +2,7 @@ package com.attackranges;
 
 import static com.attackranges.AttackRangesUtils.isAllowlistedWeapon;
 import static com.attackranges.Regions.isInRegion;
+import com.attackranges.weapons.ManualCastable;
 import com.attackranges.weapons.Weapon;
 import com.attackranges.weapons.WeaponsGenerator;
 import com.google.common.base.Splitter;
@@ -84,6 +85,7 @@ public class AttackRangesPlugin extends Plugin
 		{
 			case "allowListedWeapons":
 				allowListedWeapons = allowListSplitter.splitToList(event.getNewValue());
+			case "showManualCasting":
 				clientThread.invoke(this::updatePlayerAttackRange);
 		}
 	}
@@ -183,7 +185,10 @@ public class AttackRangesPlugin extends Plugin
 		}
 
 		Weapon weapon = weaponsMap.get(equippedWeapon.getId());
-		int unmodifiedRange = weapon.getRange(getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit));
+		String attackStyle = getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit);
+		int unmodifiedRange = (weapon instanceof ManualCastable)
+			? ((ManualCastable) weapon).getRange(attackStyle, config.getManualCastingMode())
+			: weapon.getRange(attackStyle);
 		playerAttackRange = Math.max(unmodifiedRange + externalRangeModifier, 0);
 	}
 
