@@ -161,7 +161,7 @@ public class WeaponIds
 		10280,
 		10282,
 		10284,
-		23893,
+		23983,
 		23985,
 		23901, // Gauntlet
 		23902,
@@ -198,12 +198,8 @@ public class WeaponIds
 		28585,
 		22552,
 		22555,
-		27785,
-		27788,
 		27662,
 		27665,
-		27676,
-		27679,
 		22323,
 		22481,
 		25731,
@@ -288,7 +284,23 @@ public class WeaponIds
 		28473,
 		28474,
 		28475,
-		28476
+		28476,
+		27785, // Thammaron's/Accursed sceptre (a) variants act more like regular staves
+		27788,
+		27676,
+		27679,
+		7639, // Rod of Ivandis
+		7640,
+		7641,
+		7642,
+		7643,
+		7644,
+		7645,
+		7646,
+		7647,
+		7648,
+		22398, // Ivandis flail
+		24699 // Blisterwood flail
 	);
 	private static final Set<Integer> WANDS = Set.of(
 		6908,
@@ -301,6 +313,27 @@ public class WeaponIds
 		20560,
 		21006,
 		23626
+	);
+	private static final Set<Integer> HALBERDS = Set.of(
+		1413,
+		3190,
+		3192,
+		3194,
+		3196,
+		3198,
+		3200,
+		3204,
+		6599,
+		23849, // Corrupted Gauntlet Halberd
+		23850,
+		23851,
+		23895, // Gauntlet Halberd
+		23896,
+		23897,
+		23987,
+		23989,
+		24125,
+		28049
 	);
 	// Non standard Weapons
 	// Weapons that have different values than the typical weapon in that class or where there is no standard
@@ -331,7 +364,9 @@ public class WeaponIds
 		List.of(27652, 9, 1), // Webweaver bow
 		List.of(27655, 9, 1), // Webweaver bow
 		List.of(4827, 5), // Comp ogre bow
-		List.of(29591, 10, 0) // Scorching bow
+		List.of(29591, 10, 0), // Scorching bow
+		List.of(27612, 5), // Venator bow
+		List.of(27610, 5) // Venator bow
 	);
 	private static final Set<List<Integer>> NON_STANDARD_POWERED_STAVES = Set.of(
 		List.of(22335, 6), // Starter staff
@@ -348,8 +383,10 @@ public class WeaponIds
 		List.of(23853, 10, 0), // Corrupted Staff
 		List.of(23854, 10, 0) // Corrupted Staff
 	);
-	private static final Set<List<Integer>> NON_STANDARD_DARTS = Set.of(
-		List.of(29000, 6) /// Eclipse atlatl
+	private static final Set<List<Integer>> NON_STANDARD_THROWN = Set.of(
+		List.of(29000, 6), // Eclipse atlatl
+		List.of(28919, 5), // Tonalztics of ralos
+		List.of(28922, 5) // Tonalztics of ralos
 	);
 	public final Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons = new HashSet<>();
 	public final Set<Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>>> nonStandardWeapons = new HashSet<>();
@@ -369,11 +406,12 @@ public class WeaponIds
 		standardWeapons.add(Pair.of(POWERED_STAVES, PoweredStaff::new));
 		standardWeapons.add(Pair.of(STAVES, Staff::new));
 		standardWeapons.add(Pair.of(WANDS, Wand::new));
+		standardWeapons.add(Pair.of(HALBERDS, Halberd::new));
 
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_CROSSBOWS, Crossbow::new));
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_POWERED_STAVES, PoweredStaff::new));
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_BOWS, Bow::new));
-		nonStandardWeapons.add(Pair.of(NON_STANDARD_DARTS, Dart::new));
+		nonStandardWeapons.add(Pair.of(NON_STANDARD_THROWN, GenericThrown::new));
 	}
 
 }

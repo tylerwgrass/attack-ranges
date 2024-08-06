@@ -1,6 +1,7 @@
 package com.attackranges.weapons;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+@Slf4j
 @Getter
 public class WeaponsGenerator
 {
@@ -35,6 +37,11 @@ public class WeaponsGenerator
 				Weapon weapon = idsConstructorPair.getRight().apply(weaponId);
 				if (weapon != null)
 				{
+					if (weapons.containsKey(weapon.id))
+					{
+						log.warn("Duplicate weapon entry.");
+						log.warn("Trying to insert {}, Existing {}", weapon, weapons.get(weapon.id));
+					}
 					weapons.put(weapon.id, weapon);
 				}
 			}
