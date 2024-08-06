@@ -1,5 +1,6 @@
 package com.attackranges;
 
+import static com.attackranges.Regions.isInRegion;
 import com.attackranges.weapons.Weapon;
 import com.attackranges.weapons.WeaponsGenerator;
 import com.google.inject.Provides;
@@ -11,6 +12,7 @@ import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.NpcID;
 import net.runelite.api.ParamID;
 import net.runelite.api.StructComposition;
 import net.runelite.api.VarPlayer;
@@ -18,6 +20,8 @@ import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -46,6 +50,7 @@ public class AttackRangesPlugin extends Plugin
 	private Item equippedWeapon;
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
+	public Integer externalRangeModifier = 0;
 
 	@Override
 	protected void startUp()
@@ -64,6 +69,41 @@ public class AttackRangesPlugin extends Plugin
 	protected void onGameTick(GameTick event)
 	{
 		playerVisiblePoints = AttackRangesUtils.getVisiblePoints(client.getLocalPlayer(), playerAttackRange);
+
+		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM))
+		{
+			externalRangeModifier = 0;
+		}
+	}
+
+	@Subscribe
+	public void onScriptPreFired(ScriptPreFired event)
+	{
+		if (!ColosseumHandler.isSelectModifierScript(event.getScriptId()))
+		{
+			return;
+		}
+
+		try
+		{
+			ColosseumHandler.setNextWaveModifierOptions(event.getScriptEvent().getArguments());
+		}
+		catch (Exception e)
+		{
+			log.warn("Failed to parse modifiers", e);
+		}
+	}
+
+	@Subscribe
+	public void onNpcDespawned(NpcDespawned event)
+	{
+		if (event.getNpc().getId() != NpcID.MINIMUS_12808)
+		{
+			return;
+		}
+
+		externalRangeModifier = ColosseumHandler.getMyopiaRangeDeduction(client) * -1;
+		updatePlayerAttackRange();
 	}
 
 	@Subscribe
@@ -71,9 +111,7 @@ public class AttackRangesPlugin extends Plugin
 	{
 		if (event.getVarpId() == VarPlayer.ATTACK_STYLE || event.getVarbitId() == Varbits.EQUIPPED_WEAPON_TYPE)
 		{
-			final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
-			final int equippedWeaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
-			updatePlayerAttackRange(attackStyleVarbit, equippedWeaponTypeVarbit);
+			updatePlayerAttackRange();
 		}
 	}
 
@@ -87,10 +125,8 @@ public class AttackRangesPlugin extends Plugin
 			return;
 		}
 
-		equippedWeapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());;
-		final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
-		final int equippedWeaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
-		updatePlayerAttackRange(attackStyleVarbit, equippedWeaponTypeVarbit);
+		equippedWeapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+		updatePlayerAttackRange();
 	}
 
 	@Provides
@@ -99,8 +135,10 @@ public class AttackRangesPlugin extends Plugin
 		return configManager.getConfig(AttackRangesConfig.class);
 	}
 
-	private void updatePlayerAttackRange(Integer attackStyleVarbit, Integer weaponTypeVarbit)
+	private void updatePlayerAttackRange()
 	{
+		final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
+		final int weaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
 		if (equippedWeapon == null)
 		{
 			playerAttackRange = -1;
@@ -115,7 +153,8 @@ public class AttackRangesPlugin extends Plugin
 		}
 
 		Weapon weapon = weaponsMap.get(equippedWeapon.getId());
-		playerAttackRange = weapon.getRange(getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit));
+		int unmodifiedRange = weapon.getRange(getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit));
+		playerAttackRange = Math.max(unmodifiedRange + externalRangeModifier, 0);
 	}
 
 	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit)
