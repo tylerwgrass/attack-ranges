@@ -1,5 +1,6 @@
 package com.attackranges;
 
+import static com.attackranges.AttackRangesUtils.handleDragProtection;
 import static com.attackranges.AttackRangesUtils.isAllowlistedWeapon;
 import static com.attackranges.Regions.isInRegion;
 import com.attackranges.weapons.ManualCastable;
@@ -21,6 +22,7 @@ import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.NpcID;
 import net.runelite.api.ParamID;
 import net.runelite.api.StructComposition;
@@ -30,6 +32,7 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.events.PostMenuSort;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
@@ -142,6 +145,18 @@ public class AttackRangesPlugin extends Plugin
 		{
 			externalRangeModifier = 0;
 		}
+	}
+
+	@Subscribe(priority = -1)
+	public void onPostMenuSort(PostMenuSort event)
+	{
+		MenuEntry[] menuEntries = client.getMenu().getMenuEntries();
+		if (menuEntries.length == 0 || !config.getDragProtection())
+		{
+			return;
+		}
+
+		handleDragProtection(menuEntries, playerVisiblePoints, client);
 	}
 
 	@Subscribe

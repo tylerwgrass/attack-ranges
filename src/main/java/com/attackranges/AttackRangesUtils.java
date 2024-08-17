@@ -5,6 +5,8 @@ import static com.attackranges.Regions.getPlayerRegionId;
 import java.util.List;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
+import net.runelite.api.MenuEntry;
+import net.runelite.api.NPC;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
@@ -91,5 +93,58 @@ public class AttackRangesUtils
 		boolean isRightEdge = i == points[0].length - 1 || points[i + 1][j] == null;
 
 		return isTopEdge || isBottomEdge || isLeftEdge || isRightEdge;
+	}
+
+	public static void handleDragProtection(MenuEntry[] menuEntries, WorldPoint[][] points, Client client)
+	{
+		MenuEntry topEntry = menuEntries[menuEntries.length - 1];
+		NPC target = topEntry.getNpc();
+
+		if (target == null || !topEntry.getOption().equals("Attack"))
+		{
+			return;
+		}
+
+		int examineEntryIndex = -1;
+		for (int i = 0; i < menuEntries.length; i++)
+		{
+			if (menuEntries[i].getOption().equals("Examine"))
+			{
+				examineEntryIndex = i;
+				break;
+			}
+
+		}
+
+		if (examineEntryIndex == -1)
+		{
+			return;
+		}
+
+		for (WorldPoint[] row : points)
+		{
+			for (WorldPoint point : row)
+			{
+				if (point == null)
+				{
+					continue;
+				}
+
+				if (point.toWorldArea().intersectsWith(target.getWorldArea()))
+				{
+					return;
+				}
+			}
+		}
+
+		swapOptions(menuEntries, menuEntries.length - 1, examineEntryIndex);
+		client.getMenu().setMenuEntries(menuEntries);
+	}
+
+	private static void swapOptions(MenuEntry[] entries, int i, int j)
+	{
+		MenuEntry temp = entries[i];
+		entries[i] = entries[j];
+		entries[j] = temp;
 	}
 }

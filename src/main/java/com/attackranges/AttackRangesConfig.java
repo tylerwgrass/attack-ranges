@@ -83,6 +83,15 @@ public interface AttackRangesConfig extends Config
 	default boolean getManualCastingMode() { return false; }
 
 	@ConfigItem(
+		keyName = "dragProtection",
+		name = "Enable drag protection",
+		description = "Hides the Attack option on NPCs not in attack range",
+		section = options,
+		position = 6
+	)
+	default boolean getDragProtection() { return false; }
+
+	@ConfigItem(
 		keyName = "displayMode",
 		name = "Display Mode",
 		description = "How the attack range is displayed",
