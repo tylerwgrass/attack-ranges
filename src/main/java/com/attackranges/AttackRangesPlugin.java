@@ -9,15 +9,17 @@ import com.attackranges.weapons.WeaponsGenerator;
 import com.google.common.base.Splitter;
 import com.google.inject.Provides;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
+import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemComposition;
@@ -29,6 +31,7 @@ import net.runelite.api.StructComposition;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.NpcDespawned;
@@ -43,9 +46,6 @@ import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-
-import java.util.Map;
-import java.util.HashMap;
 import net.runelite.client.util.HotkeyListener;
 
 @Slf4j
@@ -69,6 +69,8 @@ public class AttackRangesPlugin extends Plugin
 	private ClientThread clientThread;
 	@Inject
 	private KeyManager keyManager;
+	@Inject
+	private UpdateManager updateManager;
 
 	private final Splitter allowListSplitter = Splitter.on(',').omitEmptyStrings().trimResults();
 	private Item equippedWeapon;
@@ -133,6 +135,17 @@ public class AttackRangesPlugin extends Plugin
 				allowListedWeapons = allowListSplitter.splitToList(event.getNewValue());
 			case "showManualCasting":
 				clientThread.invoke(this::updatePlayerAttackRange);
+		}
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		final GameState state = event.getGameState();
+
+		if (state == GameState.LOGGED_IN && !updateManager.hasLatestVersion())
+		{
+			updateManager.sendUpdateMessage();
 		}
 	}
 
