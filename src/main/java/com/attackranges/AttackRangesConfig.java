@@ -7,10 +7,13 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
 import java.awt.Color;
+import net.runelite.client.config.Keybind;
 
 @ConfigGroup("attackRanges")
 public interface AttackRangesConfig extends Config
 {
+	String ATTACK_RANGES_GROUP = "attackranges";
+
 	@ConfigSection(
 		name = "Options",
 		description = "Attack range options",
@@ -29,7 +32,8 @@ public interface AttackRangesConfig extends Config
 		keyName = "playerEnableState",
 		name = "Display Overlay",
 		description = "When the overlay will be shown",
-		section = options
+		section = options,
+		position = 1
 	)
 	default EnableState playerEnableState()
 	{
@@ -37,10 +41,35 @@ public interface AttackRangesConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "displayHotkey",
+		name = "Display Hotkey",
+		description = "Hotkey to press to display the overlay",
+		section = options,
+		position = 2
+	)
+	default Keybind displayHotkey()
+	{
+		return Keybind.NOT_SET;
+	}
+
+	@ConfigItem(
+		keyName = "displayHotkeyMode",
+		name = "Hotkey Mode",
+		description = "Whether the hotkey is toggle or hold to display the overlay",
+		section = options,
+		position = 3
+	)
+	default DisplayHotkeyMode displayHotkeyMode()
+	{
+		return DisplayHotkeyMode.TOGGLE;
+	}
+
+	@ConfigItem(
 		keyName = "allowListedWeapons",
 		name = "Rendered weapons",
 		description = "List of items you want displayed. Supports wildcards. Example: Trident*, rune crossbow",
-		section = options
+		section = options,
+		position = 4
 	)
 	default String getAllowListedWeapons() { return ""; }
 
@@ -48,7 +77,8 @@ public interface AttackRangesConfig extends Config
 		keyName = "showManualCasting",
 		name = "Display manual casting",
 		description = "Display cast range for weapons when not auto casting",
-		section = options
+		section = options,
+		position = 5
 	)
 	default boolean getManualCastingMode() { return false; }
 
@@ -110,6 +140,13 @@ public interface AttackRangesConfig extends Config
 	{
 		ON,
 		OFF,
-		INSTANCES_ONLY
+		INSTANCES_ONLY,
+		HOTKEY_MODE
+	}
+
+	enum DisplayHotkeyMode
+	{
+		TOGGLE,
+		HOLD
 	}
 }

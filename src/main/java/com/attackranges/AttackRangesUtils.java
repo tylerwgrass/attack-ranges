@@ -1,6 +1,5 @@
 package com.attackranges;
 
-import com.attackranges.AttackRangesConfig.EnableState;
 import static com.attackranges.Regions.SUPPORTED_REGIONS;
 import static com.attackranges.Regions.getPlayerRegionId;
 import java.util.List;
@@ -69,15 +68,19 @@ public class AttackRangesUtils
 			return false;
 		}
 
-		Integer regionId = getPlayerRegionId(client);
-
-		if (regionId == null)
+		switch (config.playerEnableState())
 		{
-			return false;
+			case ON:
+				return true;
+			case HOTKEY_MODE:
+				return plugin.isRenderOverlayEnabled();
+			case INSTANCES_ONLY:
+				Integer regionId = getPlayerRegionId(client);
+				return regionId != null && SUPPORTED_REGIONS.contains(regionId);
+			case OFF:
+			default:
+				return false;
 		}
-
-		return config.playerEnableState() == EnableState.ON
-			|| (config.playerEnableState() == EnableState.INSTANCES_ONLY && SUPPORTED_REGIONS.contains(regionId));
 	}
 
 	public static boolean isOuterTile(WorldPoint[][] points, int i, int j)

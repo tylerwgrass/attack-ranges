@@ -9,8 +9,11 @@ import com.google.common.base.Splitter;
 import com.google.inject.Provides;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
@@ -33,12 +36,14 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.util.Map;
 import java.util.HashMap;
+import net.runelite.client.util.HotkeyListener;
 
 @Slf4j
 @PluginDescriptor(
@@ -52,37 +57,75 @@ public class AttackRangesPlugin extends Plugin
 	@Inject
 	private AttackRangesConfig config;
 	@Inject
+	private ConfigManager configManager;
+	@Inject
 	private AttackRangesOverlay overlay;
 	@Inject
 	private OverlayManager overlayManager;
 	@Inject
 	private ClientThread clientThread;
+	@Inject
+	private KeyManager keyManager;
+
 	private final Splitter allowListSplitter = Splitter.on(',').omitEmptyStrings().trimResults();
 	private Item equippedWeapon;
 	private List<String> allowListedWeapons = new ArrayList<>();
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
 	public Integer externalRangeModifier = 0;
+	@Getter
+	@Setter
+	private boolean renderOverlayEnabled = true;
+
+	private final String OVERLAY_RENDER_ENABLED_KEY = "player-overlay-render-enabled";
 
 	@Override
 	protected void startUp()
 	{
 		overlayManager.add(overlay);
 		weaponsMap.putAll(WeaponsGenerator.generate());
+		keyManager.registerKeyListener(playerOverlayEnabledHotkeyListener);
+
 		allowListedWeapons = allowListSplitter.splitToList(config.getAllowListedWeapons());
+
+		String savedRenderState = configManager.getConfiguration(
+			AttackRangesConfig.ATTACK_RANGES_GROUP,
+			OVERLAY_RENDER_ENABLED_KEY);
+
+		if (savedRenderState != null)
+		{
+			setRenderOverlayEnabled(Boolean.parseBoolean(savedRenderState));
+		}
 	}
 
 	@Override
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
+		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, renderOverlayEnabled);
+		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
 	}
 
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		switch(event.getKey())
+		switch (event.getKey())
 		{
+			case "playerEnableState":
+				if (Objects.equals(event.getNewValue(), AttackRangesConfig.EnableState.HOTKEY_MODE.toString()))
+				{
+					if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
+					{
+						renderOverlayEnabled = false;
+					}
+				}
+				return;
+			case "displayHotkeyMode":
+				if (Objects.equals(event.getNewValue(), AttackRangesConfig.DisplayHotkeyMode.HOLD.name()))
+				{
+					renderOverlayEnabled = false;
+				}
+				return;
 			case "allowListedWeapons":
 				allowListedWeapons = allowListSplitter.splitToList(event.getNewValue());
 			case "showManualCasting":
@@ -153,6 +196,41 @@ public class AttackRangesPlugin extends Plugin
 		equippedWeapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
 		updatePlayerAttackRange();
 	}
+
+	private final HotkeyListener playerOverlayEnabledHotkeyListener = new HotkeyListener(() -> config.displayHotkey())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
+			{
+				return;
+			}
+
+			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
+			{
+				setRenderOverlayEnabled(true);
+			}
+			else
+			{
+				setRenderOverlayEnabled(!renderOverlayEnabled);
+			}
+		}
+
+		@Override
+		public void hotkeyReleased()
+		{
+			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
+			{
+				return;
+			}
+
+			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
+			{
+				setRenderOverlayEnabled(false);
+			}
+		}
+	};
 
 	@Provides
 	AttackRangesConfig provideConfig(ConfigManager configManager)
