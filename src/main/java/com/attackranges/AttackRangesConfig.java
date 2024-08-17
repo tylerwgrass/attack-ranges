@@ -12,7 +12,7 @@ import net.runelite.client.config.Keybind;
 @ConfigGroup("attackRanges")
 public interface AttackRangesConfig extends Config
 {
-	String ATTACK_RANGES_GROUP = "attackranges";
+	String ATTACK_RANGES_GROUP = "attackRanges";
 
 	@ConfigSection(
 		name = "Options",
