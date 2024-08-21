@@ -2,7 +2,13 @@ package com.attackranges;
 
 import static com.attackranges.Regions.SUPPORTED_REGIONS;
 import static com.attackranges.Regions.getPlayerRegionId;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.MenuEntry;
@@ -14,6 +20,29 @@ import net.runelite.client.util.WildcardMatcher;
 
 public class AttackRangesUtils
 {
+	@Getter
+	private static final Set<NPC> targetableNpcs = new HashSet<>();
+	private static final Map<WorldPoint, Set<NPC>> npcPointMap = new HashMap<>();
+
+	@Getter
+	@Setter
+	private static boolean isHotkeyRenderEnabled = false;
+
+	public static Map<WorldPoint, Set<NPC>> mapNpcsToPoints(Client client)
+	{
+		Map<WorldPoint, Set<NPC>> npcPointMap = new HashMap<>();
+
+		client.getLocalPlayer().getWorldView().npcs().stream()
+			.filter(npc -> npc.getCombatLevel() > 0)
+			.forEach(npc -> {
+				WorldPoint npcPoint = npc.getWorldLocation();
+				Set<NPC> npcSet = npcPointMap.computeIfAbsent(npcPoint, k -> new HashSet<>());
+				npcSet.add(npc);
+		});
+
+		return npcPointMap;
+	}
+
 	public static boolean isAllowlistedWeapon(String weaponName, List<String> allowListedWeapons)
 	{
 		if (allowListedWeapons.isEmpty())
@@ -31,12 +60,16 @@ public class AttackRangesUtils
 		return false;
 	}
 
-	public static WorldPoint[][] getVisiblePoints(Actor actor, int dist)
+	public static WorldPoint[][] getVisiblePoints(Actor actor, int dist, Client client)
 	{
+		targetableNpcs.clear();
+		npcPointMap.clear();
+
 		if (dist < 1)
 		{
 			return new WorldPoint[0][0];
 		}
+		npcPointMap.putAll(mapNpcsToPoints(client));
 
 		final WorldArea wa = actor.getWorldArea();
 		final WorldView wv = actor.getWorldView();
@@ -57,25 +90,32 @@ public class AttackRangesUtils
 				if (wa.hasLineOfSightTo(wv, currentPoint))
 				{
 					points[i][j] = currentPoint;
+					if (npcPointMap.containsKey(currentPoint))
+					{
+						targetableNpcs.addAll(npcPointMap.get(currentPoint));
+					}
 				}
 			}
 		}
 		return points;
 	}
 
-	public static boolean shouldRenderForPlayer(AttackRangesPlugin plugin, AttackRangesConfig config, Client client)
+	public static boolean shouldRender(
+		AttackRangesPlugin plugin,
+		Client client,
+		AttackRangesConfig.EnableState enableState)
 	{
 		if (plugin.playerAttackRange < 1)
 		{
 			return false;
 		}
 
-		switch (config.playerEnableState())
+		switch (enableState)
 		{
 			case ON:
 				return true;
 			case HOTKEY_MODE:
-				return plugin.isRenderOverlayEnabled();
+				return isHotkeyRenderEnabled;
 			case INSTANCES_ONLY:
 				Integer regionId = getPlayerRegionId(client);
 				return regionId != null && SUPPORTED_REGIONS.contains(regionId);
@@ -94,8 +134,7 @@ public class AttackRangesUtils
 
 		return isTopEdge || isBottomEdge || isLeftEdge || isRightEdge;
 	}
-
-	public static void handleDragProtection(MenuEntry[] menuEntries, WorldPoint[][] points, Client client)
+	public static void handleDragProtection(MenuEntry[] menuEntries, Client client)
 	{
 		MenuEntry topEntry = menuEntries[menuEntries.length - 1];
 		NPC target = topEntry.getNpc();
@@ -116,25 +155,9 @@ public class AttackRangesUtils
 
 		}
 
-		if (examineEntryIndex == -1)
+		if (examineEntryIndex == -1 || targetableNpcs.contains(target))
 		{
 			return;
-		}
-
-		for (WorldPoint[] row : points)
-		{
-			for (WorldPoint point : row)
-			{
-				if (point == null)
-				{
-					continue;
-				}
-
-				if (point.toWorldArea().intersectsWith(target.getWorldArea()))
-				{
-					return;
-				}
-			}
 		}
 
 		swapOptions(menuEntries, menuEntries.length - 1, examineEntryIndex);

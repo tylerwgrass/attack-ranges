@@ -41,11 +41,23 @@ public interface AttackRangesConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "npcHighlightEnableState",
+		name = "Highlight NPCs",
+		description = "When to highlight NPCs that can be targeted",
+		section = options,
+		position = 2
+	)
+	default EnableState npcHighlightEnableState()
+	{
+		return EnableState.OFF;
+	}
+
+	@ConfigItem(
 		keyName = "displayHotkey",
 		name = "Display Hotkey",
 		description = "Hotkey to press to display the overlay",
 		section = options,
-		position = 2
+		position = 3
 	)
 	default Keybind displayHotkey()
 	{
@@ -57,7 +69,7 @@ public interface AttackRangesConfig extends Config
 		name = "Hotkey Mode",
 		description = "Whether the hotkey is toggle or hold to display the overlay",
 		section = options,
-		position = 3
+		position = 4
 	)
 	default DisplayHotkeyMode displayHotkeyMode()
 	{
@@ -69,27 +81,36 @@ public interface AttackRangesConfig extends Config
 		name = "Rendered weapons",
 		description = "List of items you want displayed. Supports wildcards. Example: Trident*, rune crossbow",
 		section = options,
-		position = 4
+		position = 5
 	)
-	default String getAllowListedWeapons() { return ""; }
+	default String getAllowListedWeapons()
+	{
+		return "";
+	}
 
 	@ConfigItem(
 		keyName = "showManualCasting",
 		name = "Display manual casting",
 		description = "Display cast range for weapons when not auto casting",
 		section = options,
-		position = 5
+		position = 6
 	)
-	default boolean getManualCastingMode() { return false; }
+	default boolean getManualCastingMode()
+	{
+		return false;
+	}
 
 	@ConfigItem(
 		keyName = "dragProtection",
 		name = "Enable drag protection",
 		description = "Hides the Attack option on NPCs not in attack range",
 		section = options,
-		position = 6
+		position = 7
 	)
-	default boolean getDragProtection() { return false; }
+	default boolean getDragProtection()
+	{
+		return false;
+	}
 
 	@ConfigItem(
 		keyName = "displayMode",
@@ -106,7 +127,7 @@ public interface AttackRangesConfig extends Config
 	@ConfigItem(
 		keyName = "rangeBorderColor",
 		name = "Border Color",
-		description = "The color of the target's attack range border",
+		description = "The color of the your attack range border",
 		position = 1,
 		section = styles
 	)
@@ -119,7 +140,8 @@ public interface AttackRangesConfig extends Config
 	@ConfigItem(
 		keyName = "rangeFillColor",
 		name = "Fill Color",
-		description = "The inner color of the target's attack range section",
+		description = "The inner color of the your attack range section",
+		position = 2,
 		section = styles
 	)
 	default Color rangeFillColor()
@@ -130,13 +152,53 @@ public interface AttackRangesConfig extends Config
 	@ConfigItem(
 		keyName = "borderSize",
 		name = "Border Size",
-		description = "Thickness of the attack range border",
+		description = "Thickness of your attack range border",
+		position = 3,
 		section = styles
 	)
 	default int borderSize()
 	{
 		return 1;
 	}
+
+	@Alpha
+	@ConfigItem(
+		keyName = "npcHighlightOutlineColor",
+		name = "NPC Outline Color",
+		description = "The outline color of targetable NPCs",
+		position = 4,
+		section = styles
+	)
+	default Color npcHighlightOutlineColor()
+	{
+		return new Color(0x9000FFFF, true);
+	}
+
+	@Alpha
+	@ConfigItem(
+		keyName = "npcHighlightFillColor",
+		name = "NPC Fill Color",
+		description = "The inner color of highlighted NPCs",
+		position = 5,
+		section = styles
+	)
+	default Color npcHighlightFillColor()
+	{
+		return new Color(0x4400FFFF, true);
+	}
+
+	@ConfigItem(
+		keyName = "npcHighlightOutlineThickness",
+		name = "NPC Outline Thickness",
+		description = "Thickness of the highlighted NPCs outline",
+		position = 6,
+		section = styles
+	)
+	default int npcOutlineSize()
+	{
+		return 3;
+	}
+
 
 	enum DisplayMode
 	{

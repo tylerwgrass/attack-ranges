@@ -1,10 +1,13 @@
 package com.attackranges;
 
 import static com.attackranges.AttackRangesUtils.isOuterTile;
+import static com.attackranges.AttackRangesUtils.shouldRender;
 import com.google.inject.Inject;
+import java.awt.Shape;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
+import net.runelite.api.NPC;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
 import net.runelite.api.WorldView;
@@ -39,22 +42,44 @@ class AttackRangesOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		renderPlayer(graphics);
+		if (shouldRender(plugin, client, config.playerEnableState()))
+		{
+			renderPlayer(graphics);
+		}
+
+		if (shouldRender(plugin, client, config.npcHighlightEnableState()))
+		{
+			renderTargetableNpcs(graphics);
+		}
 		return null;
+	}
+
+	private void renderTargetableNpcs(Graphics2D graphics)
+	{
+		for (NPC npc : AttackRangesUtils.getTargetableNpcs())
+		{
+			Shape npcClickbox = npc.getConvexHull();
+			renderPoly(
+				graphics,
+				config.npcHighlightOutlineColor(),
+				config.npcOutlineSize(),
+				config.npcHighlightFillColor(),
+				npcClickbox);
+		}
 	}
 
 	private void renderPlayer(Graphics2D graphics)
 	{
-		if (!AttackRangesUtils.shouldRenderForPlayer(plugin, config, client))
-		{
-			return;
-		}
-
 		drawAttackableSquares(graphics, client.getLocalPlayer(), plugin.playerVisiblePoints, config.rangeBorderColor());
 	}
 
 	private void drawAttackableSquares(Graphics2D graphics, Actor actor, WorldPoint[][] points, Color color)
 	{
+		if (points == null)
+		{
+			return;
+		}
+
 		WorldView wv = actor.getWorldView();
 		for (int i = 0; i < points.length; i++)
 		{
@@ -215,6 +240,18 @@ class AttackRangesOverlay extends Overlay
 			return;
 		}
 		graphics.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
+	}
+
+	private void renderPoly(Graphics2D graphics, Color borderColor, float borderWidth, Color fillColor, Shape polygon)
+	{
+		if (polygon != null)
+		{
+			graphics.setColor(borderColor);
+			graphics.setStroke(new BasicStroke(borderWidth));
+			graphics.draw(polygon);
+			graphics.setColor(fillColor);
+			graphics.fill(polygon);
+		}
 	}
 }
 

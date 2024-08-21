@@ -11,6 +11,9 @@ Configure a hotkey to display on toggle or hold.
 
 ![SwappingWeapons](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWw1N3c5eHFyYTdzdHVzanp3em8zOWphb3BxZnV0a2R6eGRoZjV5MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pnBdvWrBf6D1AdDFek/giphy.gif)
 
+### NPC Highlighting
+Highlight NPCs in your attack range
+
 ### Drag Protection
 Hide the attack option for NPCs outside your attack range
 
@@ -29,6 +32,3 @@ Render every tile you can attack
 Render only the outermost tiles of your attack range
 
 ![edgetiles.png](assets/edgetile.png)
-### Display style
-#### Colors
-Configure the outline color and fill color of the attackable area.

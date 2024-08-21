@@ -1,5 +1,6 @@
 package com.attackranges;
 
+import static com.attackranges.AttackRangesUtils.getVisiblePoints;
 import static com.attackranges.AttackRangesUtils.handleDragProtection;
 import static com.attackranges.AttackRangesUtils.isAllowlistedWeapon;
 import static com.attackranges.Regions.isInRegion;
@@ -14,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
@@ -78,9 +77,6 @@ public class AttackRangesPlugin extends Plugin
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
 	public Integer externalRangeModifier = 0;
-	@Getter
-	@Setter
-	private boolean renderOverlayEnabled = true;
 
 	private final String OVERLAY_RENDER_ENABLED_KEY = "player-overlay-render-enabled";
 
@@ -99,7 +95,7 @@ public class AttackRangesPlugin extends Plugin
 
 		if (savedRenderState != null)
 		{
-			setRenderOverlayEnabled(Boolean.parseBoolean(savedRenderState));
+			AttackRangesUtils.setHotkeyRenderEnabled(Boolean.parseBoolean(savedRenderState));
 		}
 	}
 
@@ -107,7 +103,7 @@ public class AttackRangesPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
-		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, renderOverlayEnabled);
+		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, AttackRangesUtils.isHotkeyRenderEnabled());
 		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
 	}
 
@@ -116,19 +112,20 @@ public class AttackRangesPlugin extends Plugin
 	{
 		switch (event.getKey())
 		{
+			case "npcHighlightEnableState":
 			case "playerEnableState":
 				if (Objects.equals(event.getNewValue(), AttackRangesConfig.EnableState.HOTKEY_MODE.toString()))
 				{
 					if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
 					{
-						renderOverlayEnabled = false;
+						AttackRangesUtils.setHotkeyRenderEnabled(false);
 					}
 				}
 				return;
 			case "displayHotkeyMode":
 				if (Objects.equals(event.getNewValue(), AttackRangesConfig.DisplayHotkeyMode.HOLD.name()))
 				{
-					renderOverlayEnabled = false;
+					AttackRangesUtils.setHotkeyRenderEnabled(false);
 				}
 				return;
 			case "allowListedWeapons":
@@ -152,7 +149,7 @@ public class AttackRangesPlugin extends Plugin
 	@Subscribe
 	protected void onGameTick(GameTick event)
 	{
-		playerVisiblePoints = AttackRangesUtils.getVisiblePoints(client.getLocalPlayer(), playerAttackRange);
+		playerVisiblePoints = getVisiblePoints(client.getLocalPlayer(), playerAttackRange, client);
 
 		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM))
 		{
@@ -169,7 +166,7 @@ public class AttackRangesPlugin extends Plugin
 			return;
 		}
 
-		handleDragProtection(menuEntries, playerVisiblePoints, client);
+		handleDragProtection(menuEntries, client);
 	}
 
 	@Subscribe
@@ -230,32 +227,33 @@ public class AttackRangesPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
+			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE &&
+				config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
 			{
 				return;
 			}
 
 			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
 			{
-				setRenderOverlayEnabled(true);
+				AttackRangesUtils.setHotkeyRenderEnabled(true);
 			}
 			else
 			{
-				setRenderOverlayEnabled(!renderOverlayEnabled);
+				AttackRangesUtils.setHotkeyRenderEnabled(!AttackRangesUtils.isHotkeyRenderEnabled());
 			}
 		}
 
 		@Override
 		public void hotkeyReleased()
 		{
-			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
+			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE &&
+				config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
 			{
 				return;
 			}
-
 			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
 			{
-				setRenderOverlayEnabled(false);
+				AttackRangesUtils.setHotkeyRenderEnabled(false);
 			}
 		}
 	};
