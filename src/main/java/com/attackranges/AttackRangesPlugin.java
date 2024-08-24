@@ -102,14 +102,17 @@ public class AttackRangesPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
-		overlayManager.remove(overlay);
-		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, AttackRangesUtils.isHotkeyRenderEnabled());
-		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
+		reset();
 	}
 
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
+		if (!AttackRangesConfig.ATTACK_RANGES_GROUP.equals(event.getGroup()))
+		{
+			return;
+		}
+
 		switch (event.getKey())
 		{
 			case "npcHighlightEnableState":
@@ -302,6 +305,15 @@ public class AttackRangesPlugin extends Plugin
 		int[] weaponStyleStructs = client.getEnum(weaponStyleEnum).getIntVals();
 		StructComposition attackStylesStruct = client.getStructComposition(weaponStyleStructs[attackStyleVarbit]);
 		return attackStylesStruct.getStringValue(ParamID.ATTACK_STYLE_NAME);
+	}
+
+	private void reset()
+	{
+		overlayManager.remove(overlay);
+		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, AttackRangesUtils.isHotkeyRenderEnabled());
+		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
+		AttackRangesUtils.getTargetableNpcs().clear();
+		AttackRangesUtils.getNpcPointMap().clear();
 	}
 }
 

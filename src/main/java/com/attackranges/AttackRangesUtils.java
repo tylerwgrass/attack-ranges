@@ -22,6 +22,7 @@ public class AttackRangesUtils
 {
 	@Getter
 	private static final Set<NPC> targetableNpcs = new HashSet<>();
+	@Getter
 	private static final Map<WorldPoint, Set<NPC>> npcPointMap = new HashMap<>();
 
 	@Getter
