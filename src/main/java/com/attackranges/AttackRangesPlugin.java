@@ -2,7 +2,6 @@ package com.attackranges;
 
 import static com.attackranges.AttackRangesUtils.getVisiblePoints;
 import static com.attackranges.AttackRangesUtils.handleDragProtection;
-import static com.attackranges.AttackRangesUtils.isAllowlistedWeapon;
 import static com.attackranges.Regions.isInRegion;
 import com.attackranges.weapons.ManualCastable;
 import com.attackranges.weapons.Weapon;
@@ -15,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
-import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.NpcID;
@@ -72,7 +71,9 @@ public class AttackRangesPlugin extends Plugin
 	private UpdateManager updateManager;
 
 	private final Splitter allowListSplitter = Splitter.on(',').omitEmptyStrings().trimResults();
+	@Getter
 	private Item equippedWeapon;
+	@Getter
 	private List<String> allowListedWeapons = new ArrayList<>();
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
@@ -274,13 +275,6 @@ public class AttackRangesPlugin extends Plugin
 		if (equippedWeapon == null)
 		{
 			playerAttackRange = 1;
-			return;
-		}
-
-		ItemComposition weaponComposition = client.getItemDefinition(equippedWeapon.getId());
-		if (!isAllowlistedWeapon(weaponComposition.getName(), allowListedWeapons))
-		{
-			playerAttackRange = -1;
 			return;
 		}
 

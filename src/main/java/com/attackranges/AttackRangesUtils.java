@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
+import net.runelite.api.Item;
+import net.runelite.api.ItemComposition;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.WorldView;
@@ -42,21 +44,27 @@ public class AttackRangesUtils
 				WorldPoint npcPoint = npc.getWorldLocation();
 				Set<NPC> npcSet = npcPointMap.computeIfAbsent(npcPoint, k -> new HashSet<>());
 				npcSet.add(npc);
-		});
+			});
 
 		return npcPointMap;
 	}
 
-	public static boolean isAllowlistedWeapon(String weaponName, List<String> allowListedWeapons)
+	public static boolean isAllowlistedWeapon(Item weapon, List<String> allowListedWeapons, Client client)
 	{
 		if (allowListedWeapons.isEmpty())
 		{
 			return true;
 		}
 
+		if (weapon == null)
+		{
+			return false;
+		}
+
+		ItemComposition weaponComposition = client.getItemDefinition(weapon.getId());
 		for (String pattern : allowListedWeapons)
 		{
-			if (WildcardMatcher.matches(pattern, weaponName))
+			if (WildcardMatcher.matches(pattern,  weaponComposition.getName()))
 			{
 				return true;
 			}
@@ -109,7 +117,10 @@ public class AttackRangesUtils
 		Client client,
 		AttackRangesConfig.EnableState enableState)
 	{
-		if (plugin.playerAttackRange < 1)
+		if (plugin.playerAttackRange < 1 || !isAllowlistedWeapon(
+			plugin.getEquippedWeapon(),
+			plugin.getAllowListedWeapons(),
+			client))
 		{
 			return false;
 		}
@@ -138,6 +149,7 @@ public class AttackRangesUtils
 
 		return isTopEdge || isBottomEdge || isLeftEdge || isRightEdge;
 	}
+
 	public static void handleDragProtection(MenuEntry[] menuEntries, Client client)
 	{
 		MenuEntry topEntry = menuEntries[menuEntries.length - 1];
