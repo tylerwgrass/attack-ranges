@@ -34,7 +34,10 @@ public class AttackRangesUtils
 		Map<WorldPoint, Set<NPC>> npcPointMap = new HashMap<>();
 
 		client.getLocalPlayer().getWorldView().npcs().stream()
-			.filter(npc -> npc.getCombatLevel() > 0)
+			.filter(npc -> {
+				String[] actions = npc.getComposition().getActions();
+				return actions != null && actions.length > 1 && actions[1] != null;
+			})
 			.forEach(npc -> {
 				WorldPoint npcPoint = npc.getWorldLocation();
 				Set<NPC> npcSet = npcPointMap.computeIfAbsent(npcPoint, k -> new HashSet<>());

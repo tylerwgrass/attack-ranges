@@ -273,7 +273,7 @@ public class AttackRangesPlugin extends Plugin
 		final int weaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
 		if (equippedWeapon == null)
 		{
-			playerAttackRange = -1;
+			playerAttackRange = 1;
 			return;
 		}
 
@@ -286,8 +286,8 @@ public class AttackRangesPlugin extends Plugin
 
 		if (!weaponsMap.containsKey(equippedWeapon.getId()))
 		{
-			log.warn("Unsupported equipment: {}", equippedWeapon);
-			playerAttackRange = -1;
+			log.warn("Unrecognized equipment: {}", equippedWeapon);
+			playerAttackRange = 1;
 			return;
 		}
 
