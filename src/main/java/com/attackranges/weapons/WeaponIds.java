@@ -333,7 +333,8 @@ public class WeaponIds
 		23987,
 		23989,
 		24125,
-		28049
+		28049,
+		29796 // Noxious halberd
 	);
 	// Non standard Weapons
 	// Weapons that have different values than the typical weapon in that class or where there is no standard
