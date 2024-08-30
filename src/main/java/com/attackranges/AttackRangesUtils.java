@@ -99,7 +99,7 @@ public class AttackRangesUtils
 			for (int y = startY, j = 0; y < maxY + 1; y++, j++)
 			{
 				WorldPoint currentPoint = new WorldPoint(x, y, wa.getPlane());
-				if (wa.hasLineOfSightTo(wv, currentPoint))
+				if (currentPoint.isInArea(wa) || wa.hasLineOfSightTo(wv, currentPoint))
 				{
 					points[i][j] = currentPoint;
 					if (npcPointMap.containsKey(currentPoint))
