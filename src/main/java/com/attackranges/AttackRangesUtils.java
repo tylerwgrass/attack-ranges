@@ -64,7 +64,7 @@ public class AttackRangesUtils
 		ItemComposition weaponComposition = client.getItemDefinition(weapon.getId());
 		for (String pattern : allowListedWeapons)
 		{
-			if (WildcardMatcher.matches(pattern,  weaponComposition.getName()))
+			if (WildcardMatcher.matches(pattern, weaponComposition.getName()))
 			{
 				return true;
 			}
@@ -115,12 +115,16 @@ public class AttackRangesUtils
 	public static boolean shouldRender(
 		AttackRangesPlugin plugin,
 		Client client,
+		AttackRangesConfig config,
 		AttackRangesConfig.EnableState enableState)
 	{
-		if (plugin.playerAttackRange < 1 || !isAllowlistedWeapon(
+		if (plugin.playerAttackRange < 1
+			|| !isAllowlistedWeapon(
 			plugin.getEquippedWeapon(),
 			plugin.getAllowListedWeapons(),
-			client))
+			client)
+			|| (!config.getShowDisplayMelee() && plugin.playerAttackRange == 1)
+		)
 		{
 			return false;
 		}

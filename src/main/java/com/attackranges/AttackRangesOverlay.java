@@ -42,12 +42,12 @@ class AttackRangesOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (shouldRender(plugin, client, config.playerEnableState()))
+		if (shouldRender(plugin, client, config, config.playerEnableState()))
 		{
 			renderPlayer(graphics);
 		}
 
-		if (shouldRender(plugin, client, config.npcHighlightEnableState()))
+		if (shouldRender(plugin, client, config, config.npcHighlightEnableState()))
 		{
 			renderTargetableNpcs(graphics);
 		}

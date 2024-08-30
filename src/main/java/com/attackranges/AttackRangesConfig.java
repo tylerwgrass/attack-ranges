@@ -101,11 +101,23 @@ public interface AttackRangesConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "showMeleeWeapons",
+		name = "Display melee",
+		description = "Display the range with melee weapons",
+		section = options,
+		position = 7
+	)
+	default boolean getShowDisplayMelee()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "dragProtection",
 		name = "Enable drag protection",
 		description = "Hides the Attack option on NPCs not in attack range",
 		section = options,
-		position = 7
+		position = 8
 	)
 	default boolean getDragProtection()
 	{
