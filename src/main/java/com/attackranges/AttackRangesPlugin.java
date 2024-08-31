@@ -308,6 +308,7 @@ public class AttackRangesPlugin extends Plugin
 		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
 		AttackRangesUtils.getTargetableNpcs().clear();
 		AttackRangesUtils.getNpcPointMap().clear();
+		weaponsMap.clear();
 	}
 }
 
