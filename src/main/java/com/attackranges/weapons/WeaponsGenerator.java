@@ -39,8 +39,8 @@ public class WeaponsGenerator
 				{
 					if (weapons.containsKey(weapon.id))
 					{
-						log.warn("Duplicate weapon entry.");
-						log.warn("Trying to insert {}, Existing {}", weapon, weapons.get(weapon.id));
+						log.debug("Duplicate weapon entry.");
+						log.debug("Trying to insert {}, Existing {}", weapon, weapons.get(weapon.id));
 					}
 					weapons.put(weapon.id, weapon);
 				}

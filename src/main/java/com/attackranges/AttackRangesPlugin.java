@@ -280,7 +280,6 @@ public class AttackRangesPlugin extends Plugin
 
 		if (!weaponsMap.containsKey(equippedWeapon.getId()))
 		{
-			log.warn("Unrecognized equipment: {}", equippedWeapon);
 			playerAttackRange = 1;
 			return;
 		}
