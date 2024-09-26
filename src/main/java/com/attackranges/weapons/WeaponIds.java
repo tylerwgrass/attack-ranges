@@ -312,7 +312,8 @@ public class WeaponIds
 		20556,
 		20560,
 		21006,
-		23626
+		23626,
+		30070 // Dragon hunter wand
 	);
 	private static final Set<Integer> HALBERDS = Set.of(
 		1413,
