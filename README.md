@@ -16,6 +16,7 @@ Highlight NPCs in your attack range
 
 ### Drag Protection
 Hide the attack option for NPCs outside your attack range
+test
 
 ## Styling
 ### Display Mode
