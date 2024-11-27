@@ -23,7 +23,9 @@ public class WeaponIds
 	);
 	private static final Set<Integer> BLOWPIPES = Set.of(
 		12926,
-		28688
+		28688,
+		30373, // Drygore blowpipe
+		30374 // Drygore blowpipe
 	);
 	private static final Set<Integer> CROSSBOWS = Set.of(
 		9174,
@@ -388,7 +390,9 @@ public class WeaponIds
 	private static final Set<List<Integer>> NON_STANDARD_THROWN = Set.of(
 		List.of(29000, 6), // Eclipse atlatl
 		List.of(28919, 5), // Tonalztics of ralos
-		List.of(28922, 5) // Tonalztics of ralos
+		List.of(28922, 5), // Tonalztics of ralos
+		List.of(30390, 7, 0), // Nature's reprisal
+		List.of(30392, 7, 0) // Nature's reprisal
 	);
 	public final Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons = new HashSet<>();
 	public final Set<Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>>> nonStandardWeapons = new HashSet<>();
