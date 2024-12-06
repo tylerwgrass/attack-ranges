@@ -388,6 +388,7 @@ public class WeaponIds
 		List.of(23854, 10, 0) // Corrupted Staff
 	);
 	private static final Set<List<Integer>> NON_STANDARD_THROWN = Set.of(
+		List.of(6522, 7), // Toktz-xil-ul
 		List.of(29000, 6), // Eclipse atlatl
 		List.of(28919, 5), // Tonalztics of ralos
 		List.of(28922, 5), // Tonalztics of ralos
