@@ -2,6 +2,9 @@
 
 Displays the attack range of your currently equipped weapon.
 
+[![Active Installs](http://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/installs/plugin/attack-ranges)](https://runelite.net/plugin-hub/show/attack-ranges)
+[![Plugin Rank](http://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/rank/plugin/attack-ranges)](https://runelite.net/plugin-hub/show/attack-ranges)
+
 ## Functionality
 Automatically displays the attack range for your equipped weapon.
 
