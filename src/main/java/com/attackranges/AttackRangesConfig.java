@@ -113,11 +113,23 @@ public interface AttackRangesConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "showSpecialAttack",
+		name = "Display special attack",
+		description = "Display ranges for special attacks, such as Dinh's Bulwark",
+		section = options,
+		position = 8
+	)
+	default boolean getShowSpecialAttack()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "dragProtection",
 		name = "Enable drag protection",
 		description = "Hides the Attack option on NPCs not in attack range",
 		section = options,
-		position = 8
+		position = 9
 	)
 	default boolean getDragProtection()
 	{

@@ -396,6 +396,10 @@ public class WeaponIds
 		List.of(30373, 6), // Drygore blowpipe
 		List.of(30374, 6) // Drygore blowpipe
 	);
+	private static final Set<List<Integer>> NON_STANDARD_MELEE = Set.of(
+		List.of(21015, 1, 4) // Dinh's Bulwark
+	);
+
 	public final Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons = new HashSet<>();
 	public final Set<Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>>> nonStandardWeapons = new HashSet<>();
 
@@ -420,6 +424,7 @@ public class WeaponIds
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_POWERED_STAVES, PoweredStaff::new));
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_BOWS, Bow::new));
 		nonStandardWeapons.add(Pair.of(NON_STANDARD_THROWN, GenericThrown::new));
+		nonStandardWeapons.add(Pair.of(NON_STANDARD_MELEE, Melee::new));
 	}
 
 }

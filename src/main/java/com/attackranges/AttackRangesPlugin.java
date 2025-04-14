@@ -4,6 +4,7 @@ import static com.attackranges.AttackRangesUtils.getVisiblePoints;
 import static com.attackranges.AttackRangesUtils.handleDragProtection;
 import static com.attackranges.Regions.isInRegion;
 import com.attackranges.weapons.ManualCastable;
+import com.attackranges.weapons.Melee;
 import com.attackranges.weapons.Weapon;
 import com.attackranges.weapons.WeaponsGenerator;
 import com.google.common.base.Splitter;
@@ -135,7 +136,11 @@ public class AttackRangesPlugin extends Plugin
 			case "allowListedWeapons":
 				allowListedWeapons = allowListSplitter.splitToList(event.getNewValue());
 			case "showManualCasting":
-				clientThread.invoke(this::updatePlayerAttackRange);
+			case "showSpecialAttack":
+				clientThread.invoke(() -> {
+					updatePlayerAttackRange();
+					playerVisiblePoints = getVisiblePoints(client.getLocalPlayer(), playerAttackRange, client);
+				});
 		}
 	}
 
@@ -286,10 +291,24 @@ public class AttackRangesPlugin extends Plugin
 
 		Weapon weapon = weaponsMap.get(equippedWeapon.getId());
 		String attackStyle = getWeaponAttackStyle(attackStyleVarbit, weaponTypeVarbit);
-		int unmodifiedRange = (weapon instanceof ManualCastable)
-			? ((ManualCastable) weapon).getRange(attackStyle, config.getManualCastingMode())
-			: weapon.getRange(attackStyle);
-		playerAttackRange = Math.max(unmodifiedRange + externalRangeModifier, 0);
+
+		int unmodifiedRange = 1;
+
+		if (weapon instanceof ManualCastable)
+		{
+			unmodifiedRange = ((ManualCastable) weapon).getRange(attackStyle, config.getManualCastingMode());
+		}
+		else if (weapon instanceof Melee)
+		{
+			unmodifiedRange = config.getShowSpecialAttack() ? ((Melee) weapon).getSpecialAttackRange() : 1;
+			return;
+		}
+		else
+		{
+			unmodifiedRange = weapon.getRange(attackStyle);
+		}
+
+		playerAttackRange = Math.max(unmodifiedRange + externalRangeModifier, 1);
 	}
 
 	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit)
