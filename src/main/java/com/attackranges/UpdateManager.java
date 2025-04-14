@@ -15,8 +15,8 @@ public class UpdateManager
 	private ConfigManager configManager;
 
 	private final String LAST_VERSION_SEEN_CONFIG_KEY = "last-version";
-	private final String UPDATE_TEXT = "Attack Ranges has been updated to 1.2. Now supports hotkey mode, NPC highlighting, and drag protection.";
-	private final String LATEST_VERSION = "1.2";
+	private final String UPDATE_TEXT = "Attack Ranges has been updated to 1.3 and can now display the Bulwark special attack range";
+	private final String LATEST_VERSION = "1.3";
 
 	public void sendUpdateMessage()
 	{
