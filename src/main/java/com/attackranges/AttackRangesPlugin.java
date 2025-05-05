@@ -301,6 +301,7 @@ public class AttackRangesPlugin extends Plugin
 		else if (weapon instanceof Melee)
 		{
 			unmodifiedRange = config.getShowSpecialAttack() ? ((Melee) weapon).getSpecialAttackRange() : 1;
+			playerAttackRange = unmodifiedRange;
 			return;
 		}
 		else
