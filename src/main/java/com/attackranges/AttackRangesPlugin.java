@@ -20,15 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.EnumID;
 import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.GameState;
-import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuEntry;
-import net.runelite.api.NpcID;
 import net.runelite.api.ParamID;
 import net.runelite.api.StructComposition;
-import net.runelite.api.VarPlayer;
-import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -36,6 +32,10 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.PostMenuSort;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.NpcID;
+import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -184,7 +184,7 @@ public class AttackRangesPlugin extends Plugin
 	@Subscribe
 	public void onNpcDespawned(NpcDespawned event)
 	{
-		if (event.getNpc().getId() != NpcID.MINIMUS_12808)
+		if (event.getNpc().getId() != NpcID.COLOSSEUM_MASTER)
 		{
 			return;
 		}
@@ -207,7 +207,7 @@ public class AttackRangesPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		if (event.getVarpId() == VarPlayer.ATTACK_STYLE || event.getVarbitId() == Varbits.EQUIPPED_WEAPON_TYPE)
+		if (event.getVarpId() == VarPlayerID.COM_MODE || event.getVarbitId() == VarbitID.COMBAT_WEAPON_CATEGORY)
 		{
 			updatePlayerAttackRange();
 		}
@@ -216,7 +216,7 @@ public class AttackRangesPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		final ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
+		final ItemContainer equipment = client.getItemContainer(InventoryID.WORN);
 		if (equipment == null)
 		{
 			equippedWeapon = null;
@@ -271,8 +271,8 @@ public class AttackRangesPlugin extends Plugin
 
 	private void updatePlayerAttackRange()
 	{
-		final int attackStyleVarbit = client.getVarpValue(VarPlayer.ATTACK_STYLE);
-		final int weaponTypeVarbit = client.getVarbitValue(Varbits.EQUIPPED_WEAPON_TYPE);
+		final int attackStyleVarbit = client.getVarpValue(VarPlayerID.COM_MODE);
+		final int weaponTypeVarbit = client.getVarbitValue(VarbitID.COMBAT_WEAPON_CATEGORY);
 		if (equippedWeapon == null)
 		{
 			playerAttackRange = 1;
