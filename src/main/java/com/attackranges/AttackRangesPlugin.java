@@ -35,7 +35,6 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.PostMenuSort;
-import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -79,6 +78,9 @@ public class AttackRangesPlugin extends Plugin
 	public WorldPoint[][] playerVisiblePoints;
 	public Integer playerAttackRange = -1;
 	public Integer externalRangeModifier = 0;
+
+	private static final int MYOPIA_LEVEL_VARBIT_ID = 9795;
+	// private static final int RELENTLESS_LEVEL_VARBIT_ID = 9798;
 
 	private final String OVERLAY_RENDER_ENABLED_KEY = "player-overlay-render-enabled";
 
@@ -160,9 +162,10 @@ public class AttackRangesPlugin extends Plugin
 	{
 		playerVisiblePoints = getVisiblePoints(client.getLocalPlayer(), playerAttackRange, client);
 
-		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM))
+		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM) && externalRangeModifier != 0)
 		{
 			externalRangeModifier = 0;
+			updatePlayerAttackRange();
 		}
 	}
 
@@ -179,24 +182,6 @@ public class AttackRangesPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onScriptPreFired(ScriptPreFired event)
-	{
-		if (!ColosseumHandler.isSelectModifierScript(event.getScriptId()))
-		{
-			return;
-		}
-
-		try
-		{
-			ColosseumHandler.setNextWaveModifierOptions(event.getScriptEvent().getArguments());
-		}
-		catch (Exception e)
-		{
-			log.warn("Failed to parse modifiers", e);
-		}
-	}
-
-	@Subscribe
 	public void onNpcDespawned(NpcDespawned event)
 	{
 		if (event.getNpc().getId() != NpcID.MINIMUS_12808)
@@ -204,7 +189,18 @@ public class AttackRangesPlugin extends Plugin
 			return;
 		}
 
-		externalRangeModifier = ColosseumHandler.getMyopiaRangeDeduction(client) * -1;
+		int myopiaLevel = 0;
+
+		try
+		{
+			myopiaLevel = client.getVarbitValue(MYOPIA_LEVEL_VARBIT_ID);
+		}
+		catch (Exception e)
+		{
+			log.debug("Failed to get myopia level");
+		}
+
+		externalRangeModifier = myopiaLevel * -2;
 		updatePlayerAttackRange();
 	}
 
