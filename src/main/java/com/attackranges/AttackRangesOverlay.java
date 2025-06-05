@@ -163,12 +163,12 @@ class AttackRangesOverlay extends Overlay
 		{
 			Point start = Perspective.localToCanvas(client, new LocalPoint(
 					lp.getX() + Perspective.LOCAL_HALF_TILE_SIZE,
-					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE - 1,
 					wv),
 				wp.getPlane());
 			Point end = Perspective.localToCanvas(client,
 				new LocalPoint(
-					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE + 1,
 					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE,
 					wv),
 				wp.getPlane());
@@ -182,12 +182,12 @@ class AttackRangesOverlay extends Overlay
 		if (lp != null && (j == 0 || points[i][j - 1] == null))
 		{
 			Point start = Perspective.localToCanvas(client, new LocalPoint(
-					lp.getX() + Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getX() + Perspective.LOCAL_HALF_TILE_SIZE - 1,
 					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE,
 					wv),
 				wp.getPlane());
 			Point end = Perspective.localToCanvas(client, new LocalPoint(
-					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE + 1,
 					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE,
 					wv),
 				wp.getPlane());
@@ -202,12 +202,12 @@ class AttackRangesOverlay extends Overlay
 		{
 			Point start = Perspective.localToCanvas(client, new LocalPoint(
 					lp.getX() + Perspective.LOCAL_HALF_TILE_SIZE,
-					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE + 1,
 					wv),
 				wp.getPlane());
 			Point end = Perspective.localToCanvas(client, new LocalPoint(
 					lp.getX() + Perspective.LOCAL_HALF_TILE_SIZE,
-					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE - 1,
 					wv),
 				wp.getPlane());
 			drawLine(graphics, start, end);
@@ -221,12 +221,12 @@ class AttackRangesOverlay extends Overlay
 		{
 			Point start = Perspective.localToCanvas(client, new LocalPoint(
 					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE,
-					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getY() - Perspective.LOCAL_HALF_TILE_SIZE + 1,
 					wv),
 				wp.getPlane());
 			Point end = Perspective.localToCanvas(client, new LocalPoint(
 					lp.getX() - Perspective.LOCAL_HALF_TILE_SIZE,
-					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE,
+					lp.getY() + Perspective.LOCAL_HALF_TILE_SIZE - 1,
 					wv),
 				wp.getPlane());
 			drawLine(graphics, start, end);
