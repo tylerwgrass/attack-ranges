@@ -302,7 +302,8 @@ public class WeaponIds
 		7648,
 		22398, // Ivandis flail
 		24699, // Blisterwood flail
-		30634 // Twinflame staff
+		30634, // Twinflame staff
+		9084 // Lunar Staff
 	);
 	private static final Set<Integer> WANDS = Set.of(
 		6908,
