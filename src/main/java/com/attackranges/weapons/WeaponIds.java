@@ -313,7 +313,9 @@ public class WeaponIds
 		9084, // Lunar Staff
 		9091, // Lunar Staff
 		9092, // Lunar Staff
-		9093 // Lunar Staff
+		9093, // Lunar Staff
+		23342,
+		12422
 	);
 	private static final Set<Integer> WANDS = Set.of(
 		6908,
@@ -383,7 +385,8 @@ public class WeaponIds
 		List.of(27612, 6), // Venator bow
 		List.of(27610, 6), // Venator bow
 		List.of(30434, 6), // Echo Venator bow
-		List.of(30436, 6) // Echo Venator bow
+		List.of(30436, 6), // Echo Venator bow
+		List.of(12424, 9, 1) //3rd age bow
 	);
 	private static final Set<List<Integer>> NON_STANDARD_POWERED_STAVES = Set.of(
 		List.of(22335, 6), // Starter staff
