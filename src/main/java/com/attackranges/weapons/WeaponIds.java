@@ -208,7 +208,16 @@ public class WeaponIds
 		22481,
 		25731,
 		25733,
-		22516
+		22516,
+		33314,
+		33316,
+		33318,
+		33320,
+		33322,
+		33323,
+		33326,
+		33328,
+		33434
 	);
 	private static final Set<Integer> STAVES = Set.of(
 		1381,
@@ -315,7 +324,10 @@ public class WeaponIds
 		9092, // Lunar Staff
 		9093, // Lunar Staff
 		23342,
-		12422
+		12422,
+		33330,
+		33332,
+		33333
 	);
 	private static final Set<Integer> WANDS = Set.of(
 		6908,
