@@ -420,8 +420,8 @@ public class WeaponIds
 	private static final Set<List<Integer>> NON_STANDARD_THROWN = Set.of(
 		List.of(6522, 7), // Toktz-xil-ul
 		List.of(29000, 6), // Eclipse atlatl
-		List.of(28919, 5), // Tonalztics of ralos
-		List.of(28922, 5), // Tonalztics of ralos
+		List.of(28919, 7), // Tonalztics of ralos
+		List.of(28922, 7), // Tonalztics of ralos
 		List.of(30390, 7, 0), // Nature's reprisal
 		List.of(30392, 7, 0), // Nature's reprisal
 		List.of(30373, 6), // Drygore blowpipe
