@@ -425,7 +425,8 @@ public class WeaponIds
 		List.of(30390, 7, 0), // Nature's reprisal
 		List.of(30392, 7, 0), // Nature's reprisal
 		List.of(30373, 6), // Drygore blowpipe
-		List.of(30374, 6) // Drygore blowpipe
+		List.of(30374, 6), // Drygore blowpipe
+		List.of(33716, 6) // Blisterwood stake
 	);
 	private static final Set<List<Integer>> NON_STANDARD_MELEE = Set.of(
 		List.of(21015, 1, 4), // Dinh's Bulwark
