@@ -217,7 +217,9 @@ public class WeaponIds
 		33323,
 		33326,
 		33328,
-		33434
+		33434,
+		34725, // Zorya's tome
+		34727  // Zorya's tome
 	);
 	private static final Set<Integer> STAVES = Set.of(
 		1381,
@@ -384,7 +386,8 @@ public class WeaponIds
 		List.of(23611, 8), // Armadyl crossbow
 		List.of(11785, 8), // Armadyl crossbow
 		List.of(26374, 8), // Zaryte crossbow
-		List.of(27186, 8) // Zaryte crossbow
+		List.of(27186, 8), // Zaryte crossbow
+		List.of(34681, 6)  // Ascension crossbows
 	);
 	private static final Set<List<Integer>> NON_STANDARD_BOWS = Set.of(
 		List.of(11708, 6), // Cursed goblin bow
