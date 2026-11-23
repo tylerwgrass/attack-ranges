@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -370,74 +369,74 @@ public class WeaponIds
 	// Weapons that have different values than the typical weapon in that class or where there is no standard
 	// values in List are [id, range, [longRangeModifier]]
 	// Modifier only included if it is not the standard value of 2
-	private static final Set<List<Integer>> NON_STANDARD_CROSSBOWS = Set.of(
-		List.of(837, 10, 0), // Crossbow
-		List.of(767, 5), // Phoenix crossbow
-		List.of(11165, 5), // Phoenix crossbow
-		List.of(11167, 5), // Phoenix crossbow
-		List.of(8880, 6), // Dorgeshuun crossbow
-		List.of(10156, 8), // Hunters' crossbow
-		List.of(28869, 8), // Hunters' sunlight crossbow
-		List.of(4734, 8), // Karil's crossbow
-		List.of(4934, 8), // Karil's crossbow
-		List.of(4935, 8), // Karil's crossbow
-		List.of(4936, 8), // Karil's crossbow
-		List.of(4937, 8), // Karil's crossbow
-		List.of(23611, 8), // Armadyl crossbow
-		List.of(11785, 8), // Armadyl crossbow
-		List.of(26374, 8), // Zaryte crossbow
-		List.of(27186, 8), // Zaryte crossbow
-		List.of(34681, 6)  // Ascension crossbows
+	private static final Set<Integer[]> NON_STANDARD_CROSSBOWS = Set.of(
+		new Integer[]{837, 10, 0}, // Crossbow
+		new Integer[]{767, 5}, // Phoenix crossbow
+		new Integer[]{11165, 5}, // Phoenix crossbow
+		new Integer[]{11167, 5}, // Phoenix crossbow
+		new Integer[]{8880, 6}, // Dorgeshuun crossbow
+		new Integer[]{10156, 8}, // Hunters' crossbow
+		new Integer[]{28869, 8}, // Hunters' sunlight crossbow
+		new Integer[]{4734, 8}, // Karil's crossbow
+		new Integer[]{4934, 8}, // Karil's crossbow
+		new Integer[]{4935, 8}, // Karil's crossbow
+		new Integer[]{4936, 8}, // Karil's crossbow
+		new Integer[]{4937, 8}, // Karil's crossbow
+		new Integer[]{23611, 8}, // Armadyl crossbow
+		new Integer[]{11785, 8}, // Armadyl crossbow
+		new Integer[]{26374, 8}, // Zaryte crossbow
+		new Integer[]{27186, 8}, // Zaryte crossbow
+		new Integer[]{34681, 6}  // Ascension crossbows
 	);
-	private static final Set<List<Integer>> NON_STANDARD_BOWS = Set.of(
-		List.of(11708, 6), // Cursed goblin bow
-		List.of(22547, 9, 1), // Craw's bow
-		List.of(22550, 9, 1), // Craw's bow
-		List.of(27652, 9, 1), // Webweaver bow
-		List.of(27655, 9, 1), // Webweaver bow
-		List.of(4827, 5), // Comp ogre bow
-		List.of(29591, 10, 0), // Scorching bow
-		List.of(27612, 6), // Venator bow
-		List.of(27610, 6), // Venator bow
-		List.of(30434, 6), // Echo Venator bow
-		List.of(30436, 6), // Echo Venator bow
-		List.of(12424, 9, 1) //3rd age bow
+	private static final Set<Integer[]> NON_STANDARD_BOWS = Set.of(
+			new Integer[]{11708, 6}, // Cursed goblin bow
+			new Integer[]{22547, 9, 1}, // Craw's bow
+			new Integer[]{22550, 9, 1}, // Craw's bow
+			new Integer[]{27652, 9, 1}, // Webweaver bow
+			new Integer[]{27655, 9, 1}, // Webweaver bow
+			new Integer[]{4827, 5}, // Comp ogre bow
+			new Integer[]{29591, 10, 0}, // Scorching bow
+			new Integer[]{27612, 6}, // Venator bow
+			new Integer[]{27610, 6}, // Venator bow
+			new Integer[]{30434, 6}, // Echo Venator bow
+			new Integer[]{30436, 6}, // Echo Venator bow
+			new Integer[]{12424, 9, 1} // 3rd age bow
 	);
-	private static final Set<List<Integer>> NON_STANDARD_POWERED_STAVES = Set.of(
-		List.of(22335, 6), // Starter staff
-		List.of(28557, 6), // Starter Staff
-		List.of(31113, 6), // Eye of ayak
-		List.of(31115, 6), // Eye of ayak (uncharged)
-		List.of(28796, 8), // Bone staff
-		List.of(27275, 8), // Tumeken's shadow
-		List.of(27277, 8), // Tumeken's shadow
-		List.of(28547, 8), // Tumeken's shadow
-		List.of(28549, 8), // Tumeken's shadow
-		List.of(23898, 10, 0), // Crystal Staff
-		List.of(23899, 10, 0), // Crystal Staff
-		List.of(23900, 10, 0), // Crystal Staff
-		List.of(23852, 10, 0), // Corrupted Staff
-		List.of(23853, 10, 0), // Corrupted Staff
-		List.of(23854, 10, 0) // Corrupted Staff
+	private static final Set<Integer[]> NON_STANDARD_POWERED_STAVES = Set.of(
+			new Integer[]{22335, 6}, // Starter staff
+			new Integer[]{28557, 6}, // Starter Staff
+			new Integer[]{31113, 6}, // Eye of ayak
+			new Integer[]{31115, 6}, // Eye of ayak (uncharged)
+			new Integer[]{28796, 8}, // Bone staff
+			new Integer[]{27275, 8}, // Tumeken's shadow
+			new Integer[]{27277, 8}, // Tumeken's shadow
+			new Integer[]{28547, 8}, // Tumeken's shadow
+			new Integer[]{28549, 8}, // Tumeken's shadow
+			new Integer[]{23898, 10, 0}, // Crystal Staff
+			new Integer[]{23899, 10, 0}, // Crystal Staff
+			new Integer[]{23900, 10, 0}, // Crystal Staff
+			new Integer[]{23852, 10, 0}, // Corrupted Staff
+			new Integer[]{23853, 10, 0}, // Corrupted Staff
+			new Integer[]{23854, 10, 0} // Corrupted Staff
 	);
-	private static final Set<List<Integer>> NON_STANDARD_THROWN = Set.of(
-		List.of(6522, 7), // Toktz-xil-ul
-		List.of(29000, 6), // Eclipse atlatl
-		List.of(28919, 7), // Tonalztics of ralos
-		List.of(28922, 7), // Tonalztics of ralos
-		List.of(30390, 7, 0), // Nature's reprisal
-		List.of(30392, 7, 0), // Nature's reprisal
-		List.of(30373, 6), // Drygore blowpipe
-		List.of(30374, 6), // Drygore blowpipe
-		List.of(33716, 6) // Blisterwood stake
+	private static final Set<Integer[]> NON_STANDARD_THROWN = Set.of(
+			new Integer[]{6522, 7}, // Toktz-xil-ul
+			new Integer[]{29000, 6}, // Eclipse atlatl
+			new Integer[]{28919, 7}, // Tonalztics of ralos
+			new Integer[]{28922, 7}, // Tonalztics of ralos
+			new Integer[]{30390, 7, 0}, // Nature's reprisal
+			new Integer[]{30392, 7, 0}, // Nature's reprisal
+			new Integer[]{30373, 6}, // Drygore blowpipe
+			new Integer[]{30374, 6}, // Drygore blowpipe
+			new Integer[]{33716, 6} // Blisterwood stake
 	);
-	private static final Set<List<Integer>> NON_STANDARD_MELEE = Set.of(
-		List.of(21015, 1, 4), // Dinh's Bulwark
-		List.of(28682, 1, 4) // Dinh's Bulwark (ornament)
+	private static final Set<Integer[]> NON_STANDARD_MELEE = Set.of(
+		new Integer[]{21015, 1, 4}, // Dinh's Bulwark
+		new Integer[]{28682, 1, 4} // Dinh's Bulwark (ornament)
 	);
 
 	public final Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons = new HashSet<>();
-	public final Set<Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>>> nonStandardWeapons = new HashSet<>();
+	public final Set<Pair<Set<Integer[]>, Function<Integer[], Weapon>>> nonStandardWeapons = new HashSet<>();
 
 	WeaponIds()
 	{

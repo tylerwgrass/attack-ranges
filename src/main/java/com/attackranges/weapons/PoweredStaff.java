@@ -1,7 +1,5 @@
 package com.attackranges.weapons;
 
-import java.util.List;
-
 public class PoweredStaff extends Weapon
 {
 	public PoweredStaff(int id)
@@ -10,7 +8,7 @@ public class PoweredStaff extends Weapon
 		range = 7;
 	}
 
-	public PoweredStaff(List<Integer> weaponData)
+	public PoweredStaff(Integer[] weaponData)
 	{
 		super(weaponData);
 	}
