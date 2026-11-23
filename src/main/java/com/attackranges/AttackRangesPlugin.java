@@ -47,11 +47,8 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
 
 @Slf4j
-@PluginDescriptor(
-	name = "Attack Ranges"
-)
-public class AttackRangesPlugin extends Plugin
-{
+@PluginDescriptor(name = "Attack Ranges")
+public class AttackRangesPlugin extends Plugin {
 	private final Map<Integer, Weapon> weaponsMap = new HashMap<>();
 	@Inject
 	private net.runelite.api.Client client;
@@ -85,8 +82,7 @@ public class AttackRangesPlugin extends Plugin
 	private final String OVERLAY_RENDER_ENABLED_KEY = "player-overlay-render-enabled";
 
 	@Override
-	protected void startUp()
-	{
+	protected void startUp() {
 		overlayManager.add(overlay);
 		weaponsMap.putAll(WeaponsGenerator.generate());
 		keyManager.registerKeyListener(playerOverlayEnabledHotkeyListener);
@@ -94,44 +90,36 @@ public class AttackRangesPlugin extends Plugin
 		allowListedWeapons = allowListSplitter.splitToList(config.getAllowListedWeapons());
 
 		String savedRenderState = configManager.getConfiguration(
-			AttackRangesConfig.ATTACK_RANGES_GROUP,
-			OVERLAY_RENDER_ENABLED_KEY);
+				AttackRangesConfig.ATTACK_RANGES_GROUP,
+				OVERLAY_RENDER_ENABLED_KEY);
 
-		if (savedRenderState != null)
-		{
+		if (savedRenderState != null) {
 			AttackRangesUtils.setHotkeyRenderEnabled(Boolean.parseBoolean(savedRenderState));
 		}
 	}
 
 	@Override
-	protected void shutDown()
-	{
+	protected void shutDown() {
 		reset();
 	}
 
 	@Subscribe
-	public void onConfigChanged(ConfigChanged event)
-	{
-		if (!AttackRangesConfig.ATTACK_RANGES_GROUP.equals(event.getGroup()))
-		{
+	public void onConfigChanged(ConfigChanged event) {
+		if (!AttackRangesConfig.ATTACK_RANGES_GROUP.equals(event.getGroup())) {
 			return;
 		}
 
-		switch (event.getKey())
-		{
+		switch (event.getKey()) {
 			case "npcHighlightEnableState":
 			case "playerEnableState":
-				if (Objects.equals(event.getNewValue(), AttackRangesConfig.EnableState.HOTKEY_MODE.toString()))
-				{
-					if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
-					{
+				if (Objects.equals(event.getNewValue(), AttackRangesConfig.EnableState.HOTKEY_MODE.toString())) {
+					if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD) {
 						AttackRangesUtils.setHotkeyRenderEnabled(false);
 					}
 				}
 				return;
 			case "displayHotkeyMode":
-				if (Objects.equals(event.getNewValue(), AttackRangesConfig.DisplayHotkeyMode.HOLD.name()))
-				{
+				if (Objects.equals(event.getNewValue(), AttackRangesConfig.DisplayHotkeyMode.HOLD.name())) {
 					AttackRangesUtils.setHotkeyRenderEnabled(false);
 				}
 				return;
@@ -147,34 +135,28 @@ public class AttackRangesPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged event)
-	{
+	public void onGameStateChanged(GameStateChanged event) {
 		final GameState state = event.getGameState();
 
-		if (state == GameState.LOGGED_IN && !updateManager.hasLatestVersion())
-		{
+		if (state == GameState.LOGGED_IN && !updateManager.hasLatestVersion()) {
 			updateManager.sendUpdateMessage();
 		}
 	}
 
 	@Subscribe
-	protected void onGameTick(GameTick event)
-	{
+	protected void onGameTick(GameTick event) {
 		playerVisiblePoints = getVisiblePoints(client.getLocalPlayer(), playerAttackRange, client);
 
-		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM) && externalRangeModifier != 0)
-		{
+		if (!isInRegion(client, Regions.FORTIS_COLOSSEUM) && externalRangeModifier != 0) {
 			externalRangeModifier = 0;
 			updatePlayerAttackRange();
 		}
 	}
 
 	@Subscribe(priority = -1)
-	public void onPostMenuSort(PostMenuSort event)
-	{
+	public void onPostMenuSort(PostMenuSort event) {
 		MenuEntry[] menuEntries = client.getMenu().getMenuEntries();
-		if (menuEntries.length == 0 || !config.getDragProtection())
-		{
+		if (menuEntries.length == 0 || !config.getDragProtection()) {
 			return;
 		}
 
@@ -182,21 +164,16 @@ public class AttackRangesPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onNpcDespawned(NpcDespawned event)
-	{
-		if (event.getNpc().getId() != NpcID.COLOSSEUM_MASTER)
-		{
+	public void onNpcDespawned(NpcDespawned event) {
+		if (event.getNpc().getId() != NpcID.COLOSSEUM_MASTER) {
 			return;
 		}
 
 		int myopiaLevel = 0;
 
-		try
-		{
+		try {
 			myopiaLevel = client.getVarbitValue(MYOPIA_LEVEL_VARBIT_ID);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			log.debug("Failed to get myopia level");
 		}
 
@@ -205,20 +182,16 @@ public class AttackRangesPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onVarbitChanged(VarbitChanged event)
-	{
-		if (event.getVarpId() == VarPlayerID.COM_MODE || event.getVarbitId() == VarbitID.COMBAT_WEAPON_CATEGORY)
-		{
+	public void onVarbitChanged(VarbitChanged event) {
+		if (event.getVarpId() == VarPlayerID.COM_MODE || event.getVarbitId() == VarbitID.COMBAT_WEAPON_CATEGORY) {
 			updatePlayerAttackRange();
 		}
 	}
 
 	@Subscribe
-	public void onItemContainerChanged(ItemContainerChanged event)
-	{
+	public void onItemContainerChanged(ItemContainerChanged event) {
 		final ItemContainer equipment = client.getItemContainer(InventoryID.WORN);
-		if (equipment == null)
-		{
+		if (equipment == null) {
 			equippedWeapon = null;
 			return;
 		}
@@ -227,60 +200,47 @@ public class AttackRangesPlugin extends Plugin
 		updatePlayerAttackRange();
 	}
 
-	private final HotkeyListener playerOverlayEnabledHotkeyListener = new HotkeyListener(() -> config.displayHotkey())
-	{
+	private final HotkeyListener playerOverlayEnabledHotkeyListener = new HotkeyListener(() -> config.displayHotkey()) {
 		@Override
-		public void hotkeyPressed()
-		{
+		public void hotkeyPressed() {
 			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE &&
-				config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
-			{
+					config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE) {
 				return;
 			}
 
-			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
-			{
+			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD) {
 				AttackRangesUtils.setHotkeyRenderEnabled(true);
-			}
-			else
-			{
+			} else {
 				AttackRangesUtils.setHotkeyRenderEnabled(!AttackRangesUtils.isHotkeyRenderEnabled());
 			}
 		}
 
 		@Override
-		public void hotkeyReleased()
-		{
+		public void hotkeyReleased() {
 			if (config.playerEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE &&
-				config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE)
-			{
+					config.npcHighlightEnableState() != AttackRangesConfig.EnableState.HOTKEY_MODE) {
 				return;
 			}
-			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD)
-			{
+			if (config.displayHotkeyMode() == AttackRangesConfig.DisplayHotkeyMode.HOLD) {
 				AttackRangesUtils.setHotkeyRenderEnabled(false);
 			}
 		}
 	};
 
 	@Provides
-	AttackRangesConfig provideConfig(ConfigManager configManager)
-	{
+	AttackRangesConfig provideConfig(ConfigManager configManager) {
 		return configManager.getConfig(AttackRangesConfig.class);
 	}
 
-	private void updatePlayerAttackRange()
-	{
+	private void updatePlayerAttackRange() {
 		final int attackStyleVarbit = client.getVarpValue(VarPlayerID.COM_MODE);
 		final int weaponTypeVarbit = client.getVarbitValue(VarbitID.COMBAT_WEAPON_CATEGORY);
-		if (equippedWeapon == null)
-		{
+		if (equippedWeapon == null) {
 			playerAttackRange = 1;
 			return;
 		}
 
-		if (!weaponsMap.containsKey(equippedWeapon.getId()))
-		{
+		if (!weaponsMap.containsKey(equippedWeapon.getId())) {
 			playerAttackRange = 1;
 			return;
 		}
@@ -290,40 +250,33 @@ public class AttackRangesPlugin extends Plugin
 
 		int unmodifiedRange = 1;
 
-		if (weapon instanceof ManualCastable)
-		{
+		if (weapon instanceof ManualCastable) {
 			unmodifiedRange = ((ManualCastable) weapon).getRange(attackStyle, config.getManualCastingMode());
-		}
-		else if (weapon instanceof Melee)
-		{
+		} else if (weapon instanceof Melee) {
 			unmodifiedRange = config.getShowSpecialAttack() ? ((Melee) weapon).getSpecialAttackRange() : 1;
 			playerAttackRange = unmodifiedRange;
 			return;
-		}
-		else
-		{
+		} else {
 			unmodifiedRange = weapon.getRange(attackStyle);
 		}
 
 		playerAttackRange = Math.max(unmodifiedRange + externalRangeModifier, 1);
 	}
 
-	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit)
-	{
+	private String getWeaponAttackStyle(Integer attackStyleVarbit, Integer weaponTypeVarbit) {
 		int weaponStyleEnum = client.getEnum(EnumID.WEAPON_STYLES).getIntValue(weaponTypeVarbit);
 		int[] weaponStyleStructs = client.getEnum(weaponStyleEnum).getIntVals();
 		StructComposition attackStylesStruct = client.getStructComposition(weaponStyleStructs[attackStyleVarbit]);
 		return attackStylesStruct.getStringValue(ParamID.ATTACK_STYLE_NAME);
 	}
 
-	private void reset()
-	{
+	private void reset() {
 		overlayManager.remove(overlay);
-		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY, AttackRangesUtils.isHotkeyRenderEnabled());
+		configManager.setConfiguration(AttackRangesConfig.ATTACK_RANGES_GROUP, OVERLAY_RENDER_ENABLED_KEY,
+				AttackRangesUtils.isHotkeyRenderEnabled());
 		keyManager.unregisterKeyListener(playerOverlayEnabledHotkeyListener);
 		AttackRangesUtils.getTargetableNpcs().clear();
 		AttackRangesUtils.getNpcPointMap().clear();
 		weaponsMap.clear();
 	}
 }
-

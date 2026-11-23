@@ -5,19 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 @Slf4j
 @Getter
-public class WeaponsGenerator
-{
+public class WeaponsGenerator {
 	private static final WeaponIds weaponIds = new WeaponIds();
 
-	public static Map<Integer, Weapon> generate()
-	{
+	// TODO:
+	// Maybe add weapons incrementally? Can add a dictionary of all types then add
+	// them one by one?
+	// Might be better than loading all at once. Don't know
+	public static Map<Integer, Weapon> generate() {
 		final Map<Integer, Weapon> standardWeapons = generateStandard(weaponIds.getStandardWeapons());
 		final Map<Integer, Weapon> nonStandardWeapons = generateNonstandard(weaponIds.getNonStandardWeapons());
 		final Map<Integer, Weapon> weapons = new HashMap<>();
@@ -27,18 +28,13 @@ public class WeaponsGenerator
 	}
 
 	private static Map<Integer, Weapon> generateStandard(
-		Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons)
-	{
+			Set<Pair<Set<Integer>, Function<Integer, Weapon>>> standardWeapons) {
 		final Map<Integer, Weapon> weapons = new HashMap<>();
-		for (Pair<Set<Integer>, Function<Integer, Weapon>> idsConstructorPair : standardWeapons)
-		{
-			for (Integer weaponId : idsConstructorPair.getLeft())
-			{
+		for (Pair<Set<Integer>, Function<Integer, Weapon>> idsConstructorPair : standardWeapons) {
+			for (Integer weaponId : idsConstructorPair.getLeft()) {
 				Weapon weapon = idsConstructorPair.getRight().apply(weaponId);
-				if (weapon != null)
-				{
-					if (weapons.containsKey(weapon.id))
-					{
+				if (weapon != null) {
+					if (weapons.containsKey(weapon.id)) {
 						log.debug("Duplicate weapon entry.");
 						log.debug("Trying to insert {}, Existing {}", weapon, weapons.get(weapon.id));
 					}
@@ -50,16 +46,12 @@ public class WeaponsGenerator
 	}
 
 	private static Map<Integer, Weapon> generateNonstandard(
-		Set<Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>>> nonStandardWeapons)
-	{
+			Set<Pair<Set<Integer[]>, Function<Integer[], Weapon>>> nonStandardWeapons) {
 		final Map<Integer, Weapon> weapons = new HashMap<>();
-		for (Pair<Set<List<Integer>>, Function<List<Integer>, Weapon>> idsConstructorPair : nonStandardWeapons)
-		{
-			for (List<Integer> weaponData : idsConstructorPair.getLeft())
-			{
+		for (Pair<Set<Integer[]>, Function<Integer[], Weapon>> idsConstructorPair : nonStandardWeapons) {
+			for (Integer[] weaponData : idsConstructorPair.getLeft()) {
 				Weapon weapon = idsConstructorPair.getRight().apply(weaponData);
-				if (weapon != null)
-				{
+				if (weapon != null) {
 					weapons.put(weapon.id, weapon);
 				}
 			}
